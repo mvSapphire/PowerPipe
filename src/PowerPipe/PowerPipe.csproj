@@ -4,8 +4,14 @@
         <TargetFramework>net6.0</TargetFramework>
         <IsPackable>true</IsPackable>
         <PackageId>PowerPipe</PackageId>
-        <Authors>Max Vorchakov</Authors>
-        <RootNamespace>PowerPipe</RootNamespace>
+        <Authors>Maxim Vorchakov</Authors>
+        <Title>PowerPipe</Title>
+        <Description>A library for .NET that uses a fluent interface to construct advanced pipelines with ease.</Description>
+        <RepositoryUrl>https://github.com/mvSapphire/PowerPipe</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageTags>pipeline, powerpipe, pipe</PackageTags>
+        <!--        <PackageIcon>logo.png</PackageIcon>-->
+        <!--        <PackageReadmeFile>readme.md</PackageReadmeFile>-->
     </PropertyGroup>
 
     <ItemGroup>
