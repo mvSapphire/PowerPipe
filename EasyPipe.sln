@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPipe", "EasyPipe\EasyPipe.csproj", "{6FE202DF-44FE-4298-9F10-A3234EE9DB24}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyPipe", "src\EasyPipe\EasyPipe.csproj", "{6FE202DF-44FE-4298-9F10-A3234EE9DB24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
