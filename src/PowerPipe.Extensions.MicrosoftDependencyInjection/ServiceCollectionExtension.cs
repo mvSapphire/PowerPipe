@@ -2,7 +2,7 @@
 using PowerPipe.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PowerPipe.Extensions;
+namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
 
 public static class ServiceCollectionExtension
 {

@@ -1,6 +1,5 @@
 ﻿using System;
 using PowerPipe.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace PowerPipe.Factories;
 
@@ -16,6 +15,6 @@ public class PipelineStepFactory : IPipelineStepFactory
     public IPipelineStep Create<TStep>()
         where TStep : IPipelineStep
     {
-        return _serviceProvider.GetService<TStep>();
+        return _serviceProvider.GetService(typeof(TStep)) as IPipelineStep;
     }
 }

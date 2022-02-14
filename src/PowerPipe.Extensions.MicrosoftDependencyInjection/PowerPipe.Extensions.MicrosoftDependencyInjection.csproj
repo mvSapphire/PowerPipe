@@ -6,12 +6,20 @@
         <PackageId>PowerPipe</PackageId>
         <Authors>Maxim Vorchakov</Authors>
         <Title>PowerPipe</Title>
-        <Description>A library for .NET that uses a fluent interface to construct advanced pipelines with ease.</Description>
+        <Description>Dependency injection extensions for PowerPipe.</Description>
         <RepositoryUrl>https://github.com/mvSapphire/PowerPipe</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageTags>pipeline, powerpipe, pipe</PackageTags>
+        <PackageTags>pipeline, powerpipe, pipe, di, dependency injection</PackageTags>
         <!--        <PackageIcon>logo.png</PackageIcon>-->
         <!--        <PackageReadmeFile>readme.md</PackageReadmeFile>-->
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\PowerPipe\PowerPipe.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    </ItemGroup>
 
 </Project>
