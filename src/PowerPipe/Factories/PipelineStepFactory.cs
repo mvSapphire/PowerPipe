@@ -1,8 +1,8 @@
 ﻿using System;
-using EasyPipe.Interfaces;
+using PowerPipe.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyPipe.Factories;
+namespace PowerPipe.Factories;
 
 public class PipelineStepFactory : IPipelineStepFactory
 {

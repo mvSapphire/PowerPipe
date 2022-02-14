@@ -2,6 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <IsPackable>true</IsPackable>
+        <PackageId>PowerPipe</PackageId>
+        <Authors>Max Vorchakov</Authors>
+        <RootNamespace>PowerPipe</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace EasyPipe.Interfaces;
+﻿namespace PowerPipe.Interfaces;
 
 public interface IPipelineStepFactory
 {

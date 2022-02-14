@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EasyPipe.Interfaces;
+using PowerPipe.Interfaces;
 
-namespace EasyPipe;
+namespace PowerPipe;
 
 public class Pipeline : IPipeline
 {

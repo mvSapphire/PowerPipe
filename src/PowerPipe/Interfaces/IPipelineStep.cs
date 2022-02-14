@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace EasyPipe.Interfaces;
+namespace PowerPipe.Interfaces;
 
 public interface IPipelineStep
 {

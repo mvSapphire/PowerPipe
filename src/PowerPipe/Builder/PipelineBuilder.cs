@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using EasyPipe.Builder.Steps;
-using EasyPipe.Interfaces;
+using PowerPipe.Builder.Steps;
+using PowerPipe.Interfaces;
 
-namespace EasyPipe.Builder;
+namespace PowerPipe.Builder;
 
 public sealed class PipelineBuilder
 {

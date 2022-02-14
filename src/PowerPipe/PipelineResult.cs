@@ -1,4 +1,4 @@
-﻿namespace EasyPipe;
+﻿namespace PowerPipe;
 
 public abstract class PipelineResult
 {

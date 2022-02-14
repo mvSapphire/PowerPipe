@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EasyPipe.Interfaces;
+using PowerPipe.Interfaces;
 
-namespace EasyPipe.Builder.Steps;
+namespace PowerPipe.Builder.Steps;
 
 public class WhenPipelineStep : IPipelineStep
 {
