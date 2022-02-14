@@ -10,8 +10,12 @@
         <RepositoryUrl>https://github.com/mvSapphire/PowerPipe</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>pipeline, powerpipe, pipe</PackageTags>
-        <!--        <PackageIcon>logo.png</PackageIcon>-->
+        <PackageIcon>logo.png</PackageIcon>
         <!--        <PackageReadmeFile>readme.md</PackageReadmeFile>-->
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\assets\logo.png" Pack="true" PackagePath=""/>
+    </ItemGroup>
 
 </Project>

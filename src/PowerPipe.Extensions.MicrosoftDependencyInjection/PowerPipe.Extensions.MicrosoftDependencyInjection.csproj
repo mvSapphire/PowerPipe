@@ -3,16 +3,20 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <IsPackable>true</IsPackable>
-        <PackageId>PowerPipe</PackageId>
+        <PackageId>PowerPipe.Extensions.MicrosoftDependencyInjection</PackageId>
         <Authors>Maxim Vorchakov</Authors>
         <Title>PowerPipe</Title>
         <Description>Dependency injection extensions for PowerPipe.</Description>
         <RepositoryUrl>https://github.com/mvSapphire/PowerPipe</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>pipeline, powerpipe, pipe, di, dependency injection</PackageTags>
-        <!--        <PackageIcon>logo.png</PackageIcon>-->
+        <PackageIcon>logo.png</PackageIcon>
         <!--        <PackageReadmeFile>readme.md</PackageReadmeFile>-->
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\assets\logo.png" Pack="true" PackagePath=""/>
+    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\PowerPipe\PowerPipe.csproj" />
