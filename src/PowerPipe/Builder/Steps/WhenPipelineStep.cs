@@ -4,20 +4,21 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-public class WhenPipelineStep : IPipelineStep
+public class WhenPipelineStep<TContext> : IPipelineStep<TContext>
+    where TContext : PipelineContext
 {
     private readonly Func<bool> _predicate;
-    private readonly PipelineBuilder _pipelineBuilder;
+    private readonly PipelineBuilder<TContext> _pipelineBuilder;
 
-    public WhenPipelineStep(Func<bool> predicate, PipelineBuilder pipelineBuilder)
+    public WhenPipelineStep(Func<bool> predicate, PipelineBuilder<TContext> pipelineBuilder)
     {
         _predicate = predicate;
         _pipelineBuilder = pipelineBuilder;
     }
 
-    public IPipelineStep NextStep { get; set; }
+    public IPipelineStep<TContext> NextStep { get; set; }
 
-    public async Task ExecuteAsync(PipelineContext context)
+    public async Task ExecuteAsync(TContext context)
     {
         if (_predicate())
         {

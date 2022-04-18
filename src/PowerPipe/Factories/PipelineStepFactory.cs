@@ -12,9 +12,10 @@ public class PipelineStepFactory : IPipelineStepFactory
         _serviceProvider = serviceProvider;
     }
 
-    public IPipelineStep Create<TStep>()
-        where TStep : IPipelineStep
+    public IPipelineStep<TContext> Create<TStep, TContext>()
+        where TStep : IPipelineStep<TContext>
+        where TContext : PipelineContext
     {
-        return _serviceProvider.GetService(typeof(TStep)) as IPipelineStep;
+        return _serviceProvider.GetService(typeof(TStep)) as IPipelineStep<TContext>;
     }
 }

@@ -4,20 +4,21 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-internal class AddWhenStep : IPipelineStep
+internal class AddWhenStep<TContext> : IPipelineStep<TContext>
+    where TContext : PipelineContext
 {
-    private readonly IPipelineStep _step;
-    private readonly Predicate<PipelineContext> _predicate;
+    private readonly IPipelineStep<TContext> _step;
+    private readonly Predicate<TContext> _predicate;
 
-    public IPipelineStep NextStep { get; set; }
+    public IPipelineStep<TContext> NextStep { get; set; }
 
-    internal AddWhenStep(Predicate<PipelineContext> predicate, IPipelineStep step)
+    internal AddWhenStep(Predicate<PipelineContext> predicate, IPipelineStep<TContext> step)
     {
         _predicate = predicate;
         _step = step;
     }
 
-    public async Task ExecuteAsync(PipelineContext context)
+    public async Task ExecuteAsync(TContext context)
     {
         if (_predicate(context))
         {

@@ -11,8 +11,9 @@ public static class ServiceCollectionExtension
         return serviceCollection.AddSingleton<IPipelineStepFactory, PipelineStepFactory>();
     }
 
-    public static IServiceCollection AddPowerPipeStep<TStep>(this IServiceCollection serviceCollection)
-        where TStep : class, IPipelineStep
+    public static IServiceCollection AddPowerPipeStep<TStep, TContext>(this IServiceCollection serviceCollection)
+        where TStep : class, IPipelineStep<TContext>
+        where TContext : PipelineContext
     {
         return serviceCollection.AddTransient<TStep>();
     }

@@ -2,7 +2,8 @@
 
 namespace PowerPipe.Interfaces;
 
-public interface IPipeline
+public interface IPipeline<TContext>
+    where TContext : PipelineContext
 {
     Task<PipelineResult> RunAsync(bool returnResult = true);
 }

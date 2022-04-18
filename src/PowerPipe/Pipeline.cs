@@ -5,12 +5,13 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe;
 
-public class Pipeline : IPipeline
+public class Pipeline<TContext> : IPipeline<TContext>
+    where TContext : PipelineContext
 {
-    private readonly PipelineContext _context;
-    private readonly IPipelineStep _initStep;
+    private readonly TContext _context;
+    private readonly IPipelineStep<TContext> _initStep;
 
-    public Pipeline(PipelineContext context, IReadOnlyCollection<IPipelineStep> steps)
+    public Pipeline(TContext context, IReadOnlyCollection<IPipelineStep<TContext>> steps)
     {
         _context = context;
 
@@ -27,7 +28,7 @@ public class Pipeline : IPipeline
         return returnResult ? _context.GetPipelineResult() : null;
     }
 
-    private static void SetNextSteps(IReadOnlyCollection<IPipelineStep> steps)
+    private static void SetNextSteps(IReadOnlyCollection<IPipelineStep<TContext>> steps)
     {
         for (var i = 0; i < steps.Count - 1; i++)
         {

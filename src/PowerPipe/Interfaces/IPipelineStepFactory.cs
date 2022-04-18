@@ -2,5 +2,7 @@
 
 public interface IPipelineStepFactory
 {
-    IPipelineStep Create<TStep>() where TStep : IPipelineStep;
+    IPipelineStep<TContext> Create<TStep, TContext>()
+        where TStep : IPipelineStep<TContext>
+        where TContext : PipelineContext;
 }

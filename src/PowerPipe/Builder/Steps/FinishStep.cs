@@ -3,11 +3,12 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-public class FinishStep : IPipelineStep
+public class FinishStep<TContext> : IPipelineStep<TContext>
+    where TContext : PipelineContext
 {
-    public IPipelineStep NextStep { get; set; }
+    public IPipelineStep<TContext> NextStep { get; set; }
 
-    public Task ExecuteAsync(PipelineContext context)
+    public Task ExecuteAsync(TContext context)
     {
         return Task.CompletedTask;
     }

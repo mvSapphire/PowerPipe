@@ -2,9 +2,10 @@
 
 namespace PowerPipe.Interfaces;
 
-public interface IPipelineStep
+public interface IPipelineStep<TContext>
+    where TContext : PipelineContext
 {
-    public IPipelineStep NextStep { get; set; }
+    public IPipelineStep<TContext> NextStep { get; set; }
 
-    Task ExecuteAsync(PipelineContext context);
+    Task ExecuteAsync(TContext context);
 }
