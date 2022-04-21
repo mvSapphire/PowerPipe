@@ -1,4 +1,5 @@
-﻿using PowerPipe.Factories;
+﻿using System;
+using PowerPipe.Factories;
 using PowerPipe.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,10 +12,9 @@ public static class ServiceCollectionExtension
         return serviceCollection.AddSingleton<IPipelineStepFactory, PipelineStepFactory>();
     }
 
-    public static IServiceCollection AddPowerPipeStep<TStep, TContext, TResult>(this IServiceCollection serviceCollection)
-        where TStep : class, IPipelineStep<TContext, TResult>
-        where TContext : PipelineContext<TResult>
-        where TResult : class
+    public static IServiceCollection AddPowerPipeStep<TStep, TContext>(this IServiceCollection serviceCollection)
+        where TStep : class, IPipelineStep<TContext>
+        where TContext : PipelineContext<Type>
     {
         return serviceCollection.AddTransient<TStep>();
     }

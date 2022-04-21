@@ -1,9 +1,10 @@
-﻿namespace PowerPipe.Interfaces;
+﻿using System;
+
+namespace PowerPipe.Interfaces;
 
 public interface IPipelineStepFactory
 {
-    IPipelineStep<TContext, TResult> Create<TStep, TContext, TResult>()
-        where TStep : IPipelineStep<TContext, TResult>
-        where TContext : PipelineContext<TResult>
-        where TResult : class;
+    IPipelineStep<TContext> Create<TStep, TContext>()
+        where TStep : IPipelineStep<TContext>
+        where TContext : PipelineContext<Type>;
 }
