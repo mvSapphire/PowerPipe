@@ -5,7 +5,6 @@ using PowerPipe.Interfaces;
 namespace PowerPipe.Builder.Steps;
 
 public class LazyStep<TContext> : IPipelineStep<TContext>
-    where TContext : PipelineContext<Type>
 {
     private readonly Lazy<IPipelineStep<TContext>> _step;
 

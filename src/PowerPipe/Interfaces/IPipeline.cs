@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace PowerPipe.Interfaces;
 
-public interface IPipeline<TContext>
-    where TContext : PipelineContext<Type>
+public interface IPipeline<TResult>
 {
-    Task<Type> RunAsync(bool returnResult = true);
+    Task<TResult> RunAsync(bool returnResult = true);
 }

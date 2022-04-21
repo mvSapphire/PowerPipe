@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
 
 namespace PowerPipe;
 
-public class Pipeline<TContext> : IPipeline<TContext>
-    where TContext : PipelineContext<Type>
+public class Pipeline<TContext, TResult> : IPipeline<TResult>
+    where TContext : PipelineContext<TResult>
+    where TResult : class
 {
     private readonly TContext _context;
     private readonly IPipelineStep<TContext> _initStep;
@@ -21,7 +21,7 @@ public class Pipeline<TContext> : IPipeline<TContext>
         SetNextSteps(steps);
     }
 
-    public async Task<Type> RunAsync(bool returnResult = true)
+    public async Task<TResult> RunAsync(bool returnResult = true)
     {
         await _initStep.ExecuteAsync(_context);
 

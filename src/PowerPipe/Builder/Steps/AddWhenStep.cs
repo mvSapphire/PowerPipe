@@ -5,14 +5,13 @@ using PowerPipe.Interfaces;
 namespace PowerPipe.Builder.Steps;
 
 internal class AddWhenStep<TContext> : IPipelineStep<TContext>
-    where TContext : PipelineContext<Type>
 {
     private readonly IPipelineStep<TContext> _step;
     private readonly Predicate<TContext> _predicate;
 
     public IPipelineStep<TContext> NextStep { get; set; }
 
-    internal AddWhenStep(Predicate<PipelineContext<Type>> predicate, IPipelineStep<TContext> step)
+    internal AddWhenStep(Predicate<TContext> predicate, IPipelineStep<TContext> step)
     {
         _predicate = predicate;
         _step = step;

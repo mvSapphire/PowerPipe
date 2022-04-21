@@ -14,7 +14,6 @@ public class PipelineStepFactory : IPipelineStepFactory
 
     public IPipelineStep<TContext> Create<TStep, TContext>()
         where TStep : IPipelineStep<TContext>
-        where TContext : PipelineContext<Type>
     {
         return _serviceProvider.GetService(typeof(TStep)) as IPipelineStep<TContext>;
     }
