@@ -4,14 +4,15 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-public class LazyStep<TContext> : IPipelineStep<TContext>
-    where TContext : PipelineContext
+public class LazyStep<TContext, TResult> : IPipelineStep<TContext, TResult>
+    where TContext : PipelineContext<TResult>
+    where TResult : class
 {
-    private readonly Lazy<IPipelineStep<TContext>> _step;
-    
-    internal LazyStep(Func<IPipelineStep<TContext>> factory)
+    private readonly Lazy<IPipelineStep<TContext, TResult>> _step;
+
+    internal LazyStep(Func<IPipelineStep<TContext, TResult>> factory)
     {
-        _step = new Lazy<IPipelineStep<TContext>>(() =>
+        _step = new Lazy<IPipelineStep<TContext, TResult>>(() =>
         {
             var instance = factory();
             instance.NextStep = NextStep;
@@ -19,9 +20,12 @@ public class LazyStep<TContext> : IPipelineStep<TContext>
         });
     }
 
-    public IPipelineStep<TContext> NextStep { get; set; }
-    public Task ExecuteAsync(TContext context)
+    public IPipelineStep<TContext, TResult> NextStep { get; set; }
+
+    public async Task ExecuteAsync(TContext context)
     {
-        throw new NotImplementedException();
+        await _step.Value.ExecuteAsync(context);
+
+        await NextStep.ExecuteAsync(context);
     }
 }

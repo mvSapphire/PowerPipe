@@ -5,10 +5,11 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder;
 
-public sealed class PipelineBuilder<TContext>
-    where TContext : PipelineContext
+public sealed class PipelineBuilder<TContext, TResult>
+    where TContext : PipelineContext<TResult>
+    where TResult : class
 {
-    private readonly List<IPipelineStep<TContext>> _steps = new();
+    private readonly List<IPipelineStep<TContext, TResult>> _steps = new();
 
     private readonly IPipelineStepFactory _pipelineStepFactory;
     private readonly TContext _context;
@@ -19,40 +20,40 @@ public sealed class PipelineBuilder<TContext>
         _context = context;
     }
 
-    public PipelineBuilder<TContext> Add<T>()
-        where T : IPipelineStep<TContext>
+    public PipelineBuilder<TContext, TResult> Add<T>()
+        where T : IPipelineStep<TContext, TResult>
     {
-        _steps.Add(new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>));
+        _steps.Add(new LazyStep<TContext, TResult>(_pipelineStepFactory.Create<T, TContext, TResult>));
 
         return this;
     }
 
-    public PipelineBuilder<TContext> AddWhen<T>(Predicate<PipelineContext> predicate)
-        where T : IPipelineStep<TContext>
+    public PipelineBuilder<TContext, TResult> AddWhen<T>(Predicate<PipelineContext<TResult>> predicate)
+        where T : IPipelineStep<TContext, TResult>
     {
-        _steps.Add(new AddWhenStep<TContext>(predicate, new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>)));
+        _steps.Add(new AddWhenStep<TContext, TResult>(predicate, new LazyStep<TContext, TResult>(_pipelineStepFactory.Create<T, TContext, TResult>)));
 
         return this;
     }
 
-    public PipelineBuilder<TContext> When(Func<PipelineContext, bool> predicate, Func<PipelineBuilder<TContext>, PipelineBuilder<TContext>> action)
+    public PipelineBuilder<TContext, TResult> When(Func<PipelineContext<TResult>, bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
     {
         return When(() => predicate(_context), action);
     }
 
-    public PipelineBuilder<TContext> When(Func<bool> predicate, Func<PipelineBuilder<TContext>, PipelineBuilder<TContext>> action)
+    public PipelineBuilder<TContext, TResult> When(Func<bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
     {
-        var whenBuilder = action(new PipelineBuilder<TContext>(_pipelineStepFactory, _context));
+        var whenBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
 
-        _steps.Add(new WhenPipelineStep<TContext>(predicate, whenBuilder));
+        _steps.Add(new WhenPipelineStep<TContext, TResult>(predicate, whenBuilder));
 
         return this;
     }
 
-    public IPipeline<TContext> Build()
+    public IPipeline<TContext, TResult> Build()
     {
-        _steps.Add(new FinishStep<TContext>());
+        _steps.Add(new FinishStep<TContext, TResult>());
 
-        return new Pipeline<TContext>(_context, _steps);
+        return new Pipeline<TContext, TResult>(_context, _steps);
     }
 }

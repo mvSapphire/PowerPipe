@@ -1,6 +1,7 @@
 ﻿namespace PowerPipe;
 
-public abstract class PipelineContext
+public abstract class PipelineContext<TResult>
+    where TResult : class
 {
-    public abstract PipelineResult GetPipelineResult();
+    public abstract TResult GetPipelineResult();
 }
