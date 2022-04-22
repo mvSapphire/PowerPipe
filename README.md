@@ -186,5 +186,5 @@ Add your steps to DI as `Transient`.
 Comming soon! :)
 
 
-# Contriburors are welcome!
+# Contributors are welcome!
 #### Contact if you have any questions m.vorchakov97@gmail.com
