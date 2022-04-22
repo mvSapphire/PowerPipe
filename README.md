@@ -51,7 +51,7 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
 Implements `public interface IPipeline<TResult>`
 
 #### Methods
-> `RunAsync(bool)`
+##### RunAsync
 
 ```csharp
 public async Task<TResult> RunAsync(bool returnResult = true)
@@ -72,7 +72,7 @@ public IPipelineStep<TContext> NextStep { get; set; }
 ```
 Represents the next pipeline step.
 ##### Methods
-> `ExecuteAsync(TContext);`
+###### ExecuteAsync
 
 ```csharp
 Task ExecuteAsync(TContext context);
