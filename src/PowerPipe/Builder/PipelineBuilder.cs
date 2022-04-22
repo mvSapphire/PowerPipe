@@ -16,6 +16,9 @@ public sealed class PipelineBuilder<TContext, TResult>
 
     public PipelineBuilder(IPipelineStepFactory pipelineStepFactory, TContext context)
     {
+        _ = pipelineStepFactory ?? throw new ArgumentNullException(nameof(pipelineStepFactory));
+        _ = context ?? throw new ArgumentNullException(nameof(context));
+
         _pipelineStepFactory = pipelineStepFactory;
         _context = context;
     }
