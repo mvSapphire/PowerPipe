@@ -25,7 +25,9 @@ public class WhenPipelineStep<TContext, TResult> : IPipelineStep<TContext>
         {
             await _pipelineBuilder.Build().RunAsync(returnResult: false);
         }
-
-        await NextStep.ExecuteAsync(context);
+        else if(NextStep != null)
+        {
+            await NextStep.ExecuteAsync(context);
+        }
     }
 }
