@@ -23,7 +23,5 @@ public class LazyStep<TContext> : IPipelineStep<TContext>
     public async Task ExecuteAsync(TContext context)
     {
         await _step.Value.ExecuteAsync(context);
-
-        await NextStep.ExecuteAsync(context);
     }
 }
