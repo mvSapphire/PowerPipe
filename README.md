@@ -89,15 +89,21 @@ public class LazyStep<TContext> : IPipelineStep<TContext>
 ```
 This class's like a 'decorator' of your steps to make them threadsafe
 
-#### AddWhenStep
+#### AddIfStep
 ```csharp
-internal class AddWhenStep<TContext> : IPipelineStep<TContext>
+internal class AddIfStep<TContext> : IPipelineStep<TContext>
 ```
 The goal of this class is to add your step to the main pipeline by some predicate.
 
-#### WhenPipelineStep
+#### AddIfElseStep
 ```csharp
-public class WhenPipelineStep<TContext, TResult> : IPipelineStep<TContext>
+internal class AddIfElseStep<TContext> : IPipelineStep<TContext>
+```
+This class is adding your step to the pipeline if the predicate is true otherwise adding another step to the pipeline.
+
+#### IfPipelineStep
+```csharp
+public class IfPipelineStep<TContext, TResult> : IPipelineStep<TContext>
     where TContext : PipelineContext<TResult>
     where TResult : class
 ```
@@ -145,15 +151,15 @@ public PipelineBuilder<TContext, TResult> AddWhen<T>(Predicate<TContext> predica
 ```
 Adds your step on some predicate.
 
-##### When
+##### If
 ```csharp
-public PipelineBuilder<TContext, TResult> When(Func<bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
+public PipelineBuilder<TContext, TResult> If(Func<bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
 ```
 Adds nested pipeline on some predicate.
 
-##### When (but another predicate (: )
+##### If (but another predicate (: )
 ```csharp
-public PipelineBuilder<TContext, TResult> When(Func<TContext, bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
+public PipelineBuilder<TContext, TResult> If(Func<TContext, bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
 ```
 Actually alike as on above but obtain `TContext` predicate.
 
