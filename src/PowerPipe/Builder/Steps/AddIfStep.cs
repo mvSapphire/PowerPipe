@@ -4,14 +4,14 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-internal class AddWhenStep<TContext> : IPipelineStep<TContext>
+internal class AddIfStep<TContext> : IPipelineStep<TContext>
 {
     private readonly IPipelineStep<TContext> _step;
     private readonly Predicate<TContext> _predicate;
 
     public IPipelineStep<TContext> NextStep { get; set; }
 
-    internal AddWhenStep(Predicate<TContext> predicate, IPipelineStep<TContext> step)
+    internal AddIfStep(Predicate<TContext> predicate, IPipelineStep<TContext> step)
     {
         _predicate = predicate;
         _step = step;

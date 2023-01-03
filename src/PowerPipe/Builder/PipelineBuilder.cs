@@ -31,24 +31,48 @@ public sealed class PipelineBuilder<TContext, TResult>
         return this;
     }
 
-    public PipelineBuilder<TContext, TResult> AddWhen<T>(Predicate<TContext> predicate)
+    [Obsolete("Use AddIf method instead")]
+    public PipelineBuilder<TContext, TResult> AddWhen<T>(Predicate<TContext> predicate) where T : IPipelineStep<TContext> => AddIf<T>(predicate);
+
+    public PipelineBuilder<TContext, TResult> AddIf<T>(Predicate<TContext> predicate)
         where T : IPipelineStep<TContext>
     {
-        _steps.Add(new AddWhenStep<TContext>(predicate, new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>)));
+        _steps.Add(new AddIfStep<TContext>(predicate, new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>)));
 
         return this;
     }
 
-    public PipelineBuilder<TContext, TResult> When(Func<TContext, bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
+    public PipelineBuilder<TContext, TResult> AddIfElse<TIf, TElse>(Predicate<TContext> predicate)
+        where TIf : IPipelineStep<TContext>
+        where TElse : IPipelineStep<TContext>
     {
-        return When(() => predicate(_context), action);
+        _steps.Add(new AddIfElseStep<TContext>(
+            predicate,
+            new LazyStep<TContext>(_pipelineStepFactory.Create<TIf, TContext>),
+            new LazyStep<TContext>(_pipelineStepFactory.Create<TElse, TContext>)));
+
+        return this;
     }
 
-    public PipelineBuilder<TContext, TResult> When(Func<bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
+    [Obsolete("Use If method instead")]
+    public PipelineBuilder<TContext, TResult> When(
+        Func<TContext, bool> predicate,
+        Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action) => If(() => predicate(_context), action);
+
+    [Obsolete("Use If method instead")]
+    public PipelineBuilder<TContext, TResult> When(
+        Func<bool> predicate,
+        Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action) => If(predicate, action);
+
+    public PipelineBuilder<TContext, TResult> If(
+        Func<TContext, bool> predicate,
+        Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action) => If(() => predicate(_context), action);
+
+    public PipelineBuilder<TContext, TResult> If(Func<bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
     {
         var whenBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
 
-        _steps.Add(new WhenPipelineStep<TContext, TResult>(predicate, whenBuilder));
+        _steps.Add(new IfPipelineStep<TContext, TResult>(predicate, whenBuilder));
 
         return this;
     }
