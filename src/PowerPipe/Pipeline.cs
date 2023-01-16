@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
 
@@ -12,11 +11,11 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
     private readonly TContext _context;
     private readonly IPipelineStep<TContext> _initStep;
 
-    public Pipeline(TContext context, IReadOnlyCollection<IPipelineStep<TContext>> steps)
+    public Pipeline(TContext context, IReadOnlyList<IPipelineStep<TContext>> steps)
     {
         _context = context;
 
-        _initStep = steps.First();
+        _initStep = steps[0];
 
         SetNextSteps(steps);
     }
@@ -29,11 +28,11 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
         return returnResult ? _context.GetPipelineResult() : null;
     }
 
-    private static void SetNextSteps(IReadOnlyCollection<IPipelineStep<TContext>> steps)
+    private static void SetNextSteps(IReadOnlyList<IPipelineStep<TContext>> steps)
     {
         for (var i = 0; i < steps.Count - 1; i++)
         {
-            steps.ElementAt(i).NextStep = steps.ElementAt(i + 1);
+            steps[i].NextStep = steps[i + 1];
         }
     }
 }
