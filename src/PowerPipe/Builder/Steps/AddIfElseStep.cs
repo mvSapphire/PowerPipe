@@ -33,7 +33,5 @@ internal class AddIfElseStep<TContext> : IPipelineStep<TContext>
 
             await _elseStep.ExecuteAsync(context);
         }
-
-        await NextStep.ExecuteAsync(context);
     }
 }

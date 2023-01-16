@@ -1,4 +1,5 @@
-﻿using PowerPipe.Factories;
+﻿using System;
+using PowerPipe.Factories;
 using PowerPipe.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,15 +7,20 @@ namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddPowerPipe(this IServiceCollection serviceCollection)
-    {
-        return serviceCollection.AddSingleton<IPipelineStepFactory, PipelineStepFactory>();
-    }
+    public static IServiceCollection AddPowerPipe(this IServiceCollection serviceCollection) =>
+        serviceCollection.AddSingleton<IPipelineStepFactory, PipelineStepFactory>();
 
-    public static IServiceCollection AddPowerPipeStep<TStep, TContext>(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddPowerPipeStep<TStep, TContext>(
+        this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TStep : class, IPipelineStep<TContext>
         where TContext : class
     {
-        return serviceCollection.AddTransient<TStep>();
+        return lifetime switch
+        {
+            ServiceLifetime.Transient => serviceCollection.AddTransient<TStep>(),
+            ServiceLifetime.Scoped => serviceCollection.AddScoped<TStep>(),
+            ServiceLifetime.Singleton => serviceCollection.AddSingleton<TStep>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null)
+        };
     }
 }
