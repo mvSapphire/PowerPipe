@@ -7,8 +7,17 @@ namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddPowerPipe(this IServiceCollection serviceCollection) =>
-        serviceCollection.AddSingleton<IPipelineStepFactory, PipelineStepFactory>();
+    public static IServiceCollection AddPowerPipe(
+        this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
+    {
+        return lifetime switch
+        {
+            ServiceLifetime.Transient => serviceCollection.AddTransient<IPipelineStepFactory, PipelineStepFactory>(),
+            ServiceLifetime.Scoped => serviceCollection.AddScoped<IPipelineStepFactory, PipelineStepFactory>(),
+            ServiceLifetime.Singleton => serviceCollection.AddSingleton<IPipelineStepFactory, PipelineStepFactory>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null)
+        };
+    }
 
     public static IServiceCollection AddPowerPipeStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
