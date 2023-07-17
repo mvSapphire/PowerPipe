@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
 
@@ -20,9 +21,9 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
         SetNextSteps(steps);
     }
 
-    public async Task<TResult> RunAsync(bool returnResult = true)
+    public async Task<TResult> RunAsync(CancellationToken cancellationToken, bool returnResult = true)
     {
-        await _initStep.ExecuteAsync(_context);
+        await _initStep.ExecuteAsync(_context, cancellationToken);
 
         // to avoid multiple result calls in nested pipelines
         return returnResult ? _context.GetPipelineResult() : null;

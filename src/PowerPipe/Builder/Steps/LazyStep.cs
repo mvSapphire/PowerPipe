@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
 
@@ -20,8 +21,8 @@ public class LazyStep<TContext> : IPipelineStep<TContext>
 
     public IPipelineStep<TContext> NextStep { get; set; }
 
-    public async Task ExecuteAsync(TContext context)
+    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
     {
-        await _step.Value.ExecuteAsync(context);
+        await _step.Value.ExecuteAsync(context, cancellationToken);
     }
 }

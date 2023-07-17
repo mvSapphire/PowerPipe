@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
 
@@ -19,19 +20,19 @@ internal class AddIfElseStep<TContext> : IPipelineStep<TContext>
         _elseStep = elseStep;
     }
 
-    public async Task ExecuteAsync(TContext context)
+    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
     {
         if (_predicate(context))
         {
             _ifStep.NextStep = NextStep;
 
-            await _ifStep.ExecuteAsync(context);
+            await _ifStep.ExecuteAsync(context, cancellationToken);
         }
         else
         {
             _elseStep.NextStep = NextStep;
 
-            await _elseStep.ExecuteAsync(context);
+            await _elseStep.ExecuteAsync(context, cancellationToken);
         }
     }
 }
