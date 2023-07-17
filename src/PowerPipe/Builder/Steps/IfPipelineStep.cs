@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
 
@@ -19,13 +20,13 @@ public class IfPipelineStep<TContext, TResult> : IPipelineStep<TContext>
 
     public IPipelineStep<TContext> NextStep { get; set; }
 
-    public async Task ExecuteAsync(TContext context)
+    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
     {
         if (_predicate())
         {
-            await _pipelineBuilder.Build().RunAsync(returnResult: false);
+            await _pipelineBuilder.Build().RunAsync(cancellationToken, returnResult: false);
         }
 
-        await NextStep.ExecuteAsync(context);
+        await NextStep.ExecuteAsync(context, cancellationToken);
     }
 }
