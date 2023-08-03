@@ -2,6 +2,27 @@
 
 PowerPipe is a versatile .NET library designed to streamline the process of building advanced pipelines using a fluent interface. The primary objective of this project is to eliminate the need for writing boilerplate code when implementing pipelines.
 
+**Table of Contents**
+- [Features and Benefits](#features-and-benefits)
+- [Installation](#installation)
+  - [Package Manager Console](#package-manager-console)
+  - [.NET CLI](#net-cli)
+- [Core Components](#core-components)
+  - [PipelineContext: Abstract Context Class](#pipelinecontext-abstract-context-class)
+  - [Pipeline: Constructing Pipelines](#pipeline-constructing-pipelines)
+    - [Pipeline Methods](#pipeline-methods)
+- [Pipeline Steps: Building Blocks of Pipelines](#pipeline-steps-building-blocks-of-pipelines)
+  - [IPipelineStep Interface](#ipipelinestep-interface)
+    - [ExecuteAsync Method](#executeasync-method)
+  - [Pre-implemented Steps](#pre-implemented-steps)
+- [PipelineStepFactory: Step Factory for Dependency Injection](#pipelinestepfactory-step-factory-for-dependency-injection)
+- [PipelineBuilder: Building Pipelines](#pipelinebuilder-building-pipelines)
+  - [PipelineBuilder Methods](#pipelinebuilder-methods)
+- [Extensions: Microsoft Dependency Injection](#extensions-microsoft-dependency-injection)
+  - [Methods](#methods)
+- [Examples](#examples)
+- [Contributors are Welcome!](#contributors-are-welcome)
+
 ## Features and Benefits
 
 - Developed using .NET 6 for optimal performance and compatibility.
