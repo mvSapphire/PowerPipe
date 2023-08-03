@@ -9,9 +9,9 @@
         <Description>A library for .NET that uses a fluent interface to construct advanced pipelines with ease.</Description>
         <RepositoryUrl>https://github.com/mvSapphire/PowerPipe</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageTags>pipeline, powerpipe, pipe</PackageTags>
+        <PackageTags>pipeline, powerpipe, pipe, builder, chain, chain-of-responsibility</PackageTags>
         <PackageIcon>logo.png</PackageIcon>
-        <!--        <PackageReadmeFile>readme.md</PackageReadmeFile>-->
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
