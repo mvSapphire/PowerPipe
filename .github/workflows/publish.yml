@@ -30,19 +30,21 @@ jobs:
 
       - name: Get Version
         id: version
-        uses: battila7/get-version-action@v2
+        uses: nowsprinting/check-version-format-action@v3
+        with:
+          prefix: 'v'
 
       - name: Build PowerPipe
         run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
 
       - name: Pack PowerPipe
-        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.full_without_prefix }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
       - name: Build PowerPipe.Extensions.MicrosoftDependencyInjection
         run: dotnet build ${{ env.PROJECT_EXTENSIONS_PATH }} --no-restore --configuration Release
 
       - name: Pack PowerPipe.Extensions.MicrosoftDependencyInjection
-        run: dotnet pack ${{ env.PROJECT_EXTENSIONS_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        run: dotnet pack ${{ env.PROJECT_EXTENSIONS_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.full_without_prefix }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
       - name: Push beta packages
         run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
