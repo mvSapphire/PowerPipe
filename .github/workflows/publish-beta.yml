@@ -5,10 +5,15 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
 
+env:
+  PROJECT_PATH: 'PowerPipe/PowerPipe.csproj'
+  PROJECT_EXTENSIONS_PATH: 'PowerPipe.Extensions.MicrosoftDependencyInjection/PowerPipe.Extensions.MicrosoftDependencyInjection.csproj'
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
+  NUGET_SOURCE_URL: 'https://api.nuget.org/v3/index.json'
+
 jobs:
   publish:
     name: Build&Publish beta packages
-    timeout-minutes: 5
     runs-on: 'windows-latest'
     steps:
       - name: Check out code
@@ -22,16 +27,21 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build&Publish beta PowerPipe
-        uses: brandedoutcast/publish-nuget@v2
-        with:
-          PROJECT_FILE_PATH: 'src/PowerPipe/PowerPipe.csproj'
-          VERSION_REGEX: 'v[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      - name: Get Version
+        id: version
+        uses: battila7/get-version-action@v2
 
-      - name: Build&Publish beta PowerPipe.Extensions.MicrosoftDependencyInjection
-        uses: brandedoutcast/publish-nuget@v2
-        with:
-          PROJECT_FILE_PATH: 'src/PowerPipe.Extensions.MicrosoftDependencyInjection/PowerPipe.Extensions.MicrosoftDependencyInjection.csproj'
-          VERSION_REGEX: 'v[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      - name: Build PowerPipe
+        run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
+
+      - name: Pack PowerPipe beta
+        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Build PowerPipe.Extensions.MicrosoftDependencyInjection
+        run: dotnet build ${{ env.PROJECT_EXTENSIONS_PATH }} --no-restore --configuration Release
+
+      - name: Pack PowerPipe.Extensions.MicrosoftDependencyInjection beta
+        run: dotnet pack ${{ env.PROJECT_EXTENSIONS_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: Push beta packages
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
