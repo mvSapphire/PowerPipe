@@ -26,12 +26,12 @@ jobs:
         uses: brandedoutcast/publish-nuget@v2
         with:
           PROJECT_FILE_PATH: 'src/PowerPipe/PowerPipe.csproj'
-          TAG_FORMAT: v*
+          VERSION_REGEX: 'v[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
 
       - name: Build&Publish beta PowerPipe.Extensions.MicrosoftDependencyInjection
         uses: brandedoutcast/publish-nuget@v2
         with:
           PROJECT_FILE_PATH: 'src/PowerPipe.Extensions.MicrosoftDependencyInjection/PowerPipe.Extensions.MicrosoftDependencyInjection.csproj'
-          TAG_FORMAT: v*
+          VERSION_REGEX: 'v[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
