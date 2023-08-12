@@ -39,10 +39,10 @@ jobs:
         run: |
           dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
           dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.full_without_prefix }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\${{ PROJECT_NAME }}.${{ steps.version.outputs.full_without_prefix }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\${{ env.PROJECT_NAME }}.${{ steps.version.outputs.full_without_prefix }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
 
       - name: Build&Publish PowerPipe.Extensions.MicrosoftDependencyInjection
         run: |
           dotnet build ${{ env.PROJECT_EXTENSIONS_PATH }} --no-restore --configuration Release
           dotnet pack ${{ env.PROJECT_EXTENSIONS_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.full_without_prefix }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\${{ PROJECT_EXTENSIONS_NAME }}.${{ steps.version.outputs.full_without_prefix }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\${{ env.PROJECT_EXTENSIONS_NAME }}.${{ steps.version.outputs.full_without_prefix }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }}
