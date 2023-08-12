@@ -31,9 +31,6 @@ public sealed class PipelineBuilder<TContext, TResult>
         return this;
     }
 
-    [Obsolete("Use AddIf method instead")]
-    public PipelineBuilder<TContext, TResult> AddWhen<T>(Predicate<TContext> predicate) where T : IPipelineStep<TContext> => AddIf<T>(predicate);
-
     public PipelineBuilder<TContext, TResult> AddIf<T>(Predicate<TContext> predicate)
         where T : IPipelineStep<TContext>
     {
@@ -53,16 +50,6 @@ public sealed class PipelineBuilder<TContext, TResult>
 
         return this;
     }
-
-    [Obsolete("Use If method instead")]
-    public PipelineBuilder<TContext, TResult> When(
-        Func<TContext, bool> predicate,
-        Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action) => If(() => predicate(_context), action);
-
-    [Obsolete("Use If method instead")]
-    public PipelineBuilder<TContext, TResult> When(
-        Func<bool> predicate,
-        Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action) => If(predicate, action);
 
     public PipelineBuilder<TContext, TResult> If(
         Func<TContext, bool> predicate,
