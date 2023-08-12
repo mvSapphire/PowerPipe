@@ -1,0 +1,37 @@
+name: "Publish"
+
+on:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    publish:
+        name: Build&Publish packages
+        timeout-minutes: 5
+        runs-on: 'windows-latest'
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v3
+
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: '6.0.x'
+
+            - name: Restore dependencies
+              run: dotnet restore
+
+            - name: Build&Publish PowerPipe
+              uses: brandedoutcast/publish-nuget@v2
+              with:
+                  PROJECT_FILE_PATH: 'src/PowerPipe/PowerPipe.csproj' 
+                  TAG_FORMAT: v*
+                  NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+
+            - name: Build&Publish PowerPipe.Extensions.MicrosoftDependencyInjection
+              uses: brandedoutcast/publish-nuget@v2
+              with:
+                  PROJECT_FILE_PATH: 'src/PowerPipe.Extensions.MicrosoftDependencyInjection/PowerPipe.Extensions.MicrosoftDependencyInjection.csproj'
+                  TAG_FORMAT: v*
+                  NUGET_KEY: ${{secrets.NUGET_API_KEY}}
