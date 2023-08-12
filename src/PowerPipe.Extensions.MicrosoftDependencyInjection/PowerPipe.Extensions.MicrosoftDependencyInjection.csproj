@@ -4,14 +4,14 @@
         <TargetFramework>net6.0</TargetFramework>
         <IsPackable>true</IsPackable>
         <PackageId>PowerPipe.Extensions.MicrosoftDependencyInjection</PackageId>
-        <Authors>Maxim Vorchakov</Authors>
+        <Authors>Maksym Vorchakov</Authors>
         <Title>PowerPipe</Title>
         <Description>Dependency injection extensions for PowerPipe.</Description>
         <RepositoryUrl>https://github.com/mvSapphire/PowerPipe</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>pipeline, powerpipe, pipe, di, dependency injection</PackageTags>
         <PackageIcon>logo.png</PackageIcon>
-        <!--        <PackageReadmeFile>readme.md</PackageReadmeFile>-->
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
