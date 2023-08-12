@@ -1,6 +1,6 @@
 # PowerPipe: A .NET Library for Constructing Advanced Pipelines with Fluent Interface
 
-[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mvSapphire/PowerPipe/dotnet.yml)](https://github.com/mvSapphire/PowerPipe/actions)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mvSapphire/PowerPipe/build.yml)](https://github.com/mvSapphire/PowerPipe/actions)
 [![Nuget](https://img.shields.io/nuget/v/PowerPipe)](https://www.nuget.org/packages/PowerPipe)
 [![Nuget](https://img.shields.io/nuget/dt/PowerPipe)](https://www.nuget.org/stats/packages/PowerPipe?groupby=Version)
 
