@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PowerPipe.Builder;
 using PowerPipe.Factories;
-using PowerPipe.Interfaces;
+using PowerPipe.UnitTests.Steps;
 
 namespace PowerPipe.UnitTests;
 
@@ -123,24 +123,3 @@ public class PipelineTests
 }
 
 public record TestPipelineResult;
-
-public class TestPipelineContext : PipelineContext<TestPipelineResult>
-{
-    public override TestPipelineResult GetPipelineResult() => new();
-}
-
-public class TestStep1 : IPipelineStep<TestPipelineContext>
-{
-    public IPipelineStep<TestPipelineContext> NextStep { get; set; }
-
-    public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
-}
-
-public class TestStep2 : IPipelineStep<TestPipelineContext>
-{
-    public IPipelineStep<TestPipelineContext> NextStep { get; set; }
-
-    public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
-}
