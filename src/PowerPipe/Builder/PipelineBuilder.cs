@@ -9,7 +9,7 @@ public sealed class PipelineBuilder<TContext, TResult>
     where TContext : PipelineContext<TResult>
     where TResult : class
 {
-    private readonly List<IPipelineStep<TContext>> _steps = new();
+    private readonly List<InternalStep<TContext>> _steps = new();
 
     private readonly IPipelineStepFactory _pipelineStepFactory;
     private readonly TContext _context;
@@ -60,6 +60,21 @@ public sealed class PipelineBuilder<TContext, TResult>
         var whenBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
 
         _steps.Add(new IfPipelineStep<TContext, TResult>(predicate, whenBuilder));
+
+        return this;
+    }
+
+    public PipelineBuilder<TContext, TResult> OnError(PipelineStepErrorHandling errorHandling, TimeSpan? retryInterval = null, int? maxRetryCount = null)
+    {
+        if (errorHandling is PipelineStepErrorHandling.Retry)
+        {
+            retryInterval ??= TimeSpan.FromSeconds(1);
+            maxRetryCount ??= 1;
+        }
+
+        var lastStep = _steps[^1];
+
+        lastStep.ConfigureErrorHandling(errorHandling, retryInterval, maxRetryCount);
 
         return this;
     }

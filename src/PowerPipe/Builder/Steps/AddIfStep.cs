@@ -5,12 +5,10 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-internal class AddIfStep<TContext> : IPipelineStep<TContext>
+internal class AddIfStep<TContext> : InternalStep<TContext>
 {
     private readonly IPipelineStep<TContext> _step;
     private readonly Predicate<TContext> _predicate;
-
-    public IPipelineStep<TContext> NextStep { get; set; }
 
     internal AddIfStep(Predicate<TContext> predicate, IPipelineStep<TContext> step)
     {
@@ -18,7 +16,7 @@ internal class AddIfStep<TContext> : IPipelineStep<TContext>
         _step = step;
     }
 
-    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
+    protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
         if (_predicate(context))
         {
