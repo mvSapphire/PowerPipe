@@ -1,9 +1,12 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PowerPipe.Builder;
+using PowerPipe.Builder.Steps;
 using PowerPipe.Factories;
 using PowerPipe.Interfaces;
 
@@ -120,6 +123,50 @@ public class PipelineTests
 
         await task;
     }
+
+    [Theory]
+    [InlineData(PipelineStepErrorHandling.Suppress)]
+    [InlineData(PipelineStepErrorHandling.Retry)]
+    public async Task OnError_Succeed(PipelineStepErrorHandling errorHandlingBehaviour)
+    {
+        var step = Substitute.For<TestStep1>();
+
+        var exceptionMessage = "Test message";
+
+        step.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
+            .Returns(x => throw new InvalidOperationException(exceptionMessage));
+
+        var context = new TestPipelineContext();
+        var cts = new CancellationTokenSource();
+
+        var stepFactory =
+            new PipelineStepFactory(new ServiceCollection()
+                .AddTransient(_ => step)
+                .BuildServiceProvider());
+
+        var retryCount = 3;
+        var isRetryBehaviour = errorHandlingBehaviour is PipelineStepErrorHandling.Retry;
+
+        var pipeline = new PipelineBuilder<TestPipelineContext, TestPipelineResult>(stepFactory, context)
+            .Add<TestStep1>()
+            .OnError(errorHandlingBehaviour, maxRetryCount: isRetryBehaviour ? retryCount : default)
+            .Build();
+
+        var action = () => pipeline.RunAsync(cts.Token);
+
+        if (isRetryBehaviour)
+        {
+            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage(exceptionMessage);
+
+            await step.Received(1 + retryCount).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+        }
+        else
+        {
+            await action.Should().NotThrowAsync<InvalidOperationException>();
+
+            await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+        }
+    }
 }
 
 public record TestPipelineResult;
@@ -133,7 +180,7 @@ public class TestStep1 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
         Task.CompletedTask;
 }
 
@@ -141,6 +188,6 @@ public class TestStep2 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
         Task.CompletedTask;
 }
