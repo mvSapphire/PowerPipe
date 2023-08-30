@@ -29,7 +29,7 @@ public class PipelineTests
 
         await pipeline.RunAsync(cts.Token);
 
-        await step.Received().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+        await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
     }
 
     [Theory]
@@ -53,7 +53,7 @@ public class PipelineTests
         await pipeline.RunAsync(cts.Token);
 
         var task = predicate
-            ? step.Received().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token))
+            ? step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token))
             : step.DidNotReceive().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
 
         await task;
@@ -83,12 +83,12 @@ public class PipelineTests
 
         if (predicate)
         {
-            await step1.Received().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+            await step1.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
             await step2.DidNotReceive().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
         }
         else
         {
-            await step2.Received().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+            await step2.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
             await step1.DidNotReceive().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
         }
     }
@@ -115,7 +115,7 @@ public class PipelineTests
         await pipeline.RunAsync(cts.Token);
 
         var task = predicate
-            ? step.Received().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token))
+            ? step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token))
             : step.DidNotReceive().ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
 
         await task;
@@ -133,7 +133,7 @@ public class TestStep1 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
         Task.CompletedTask;
 }
 
@@ -141,6 +141,6 @@ public class TestStep2 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
         Task.CompletedTask;
 }
