@@ -8,7 +8,7 @@ using NSubstitute;
 using PowerPipe.Builder;
 using PowerPipe.Builder.Steps;
 using PowerPipe.Factories;
-using PowerPipe.Interfaces;
+using PowerPipe.UnitTests.Steps;
 
 namespace PowerPipe.UnitTests;
 
@@ -167,27 +167,4 @@ public class PipelineTests
             await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
         }
     }
-}
-
-public record TestPipelineResult;
-
-public class TestPipelineContext : PipelineContext<TestPipelineResult>
-{
-    public override TestPipelineResult GetPipelineResult() => new();
-}
-
-public class TestStep1 : IPipelineStep<TestPipelineContext>
-{
-    public IPipelineStep<TestPipelineContext> NextStep { get; set; }
-
-    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
-}
-
-public class TestStep2 : IPipelineStep<TestPipelineContext>
-{
-    public IPipelineStep<TestPipelineContext> NextStep { get; set; }
-
-    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
 }
