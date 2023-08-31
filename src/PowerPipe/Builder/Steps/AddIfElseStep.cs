@@ -5,13 +5,11 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-internal class AddIfElseStep<TContext> : IPipelineStep<TContext>
+internal class AddIfElseStep<TContext> : InternalStep<TContext>
 {
     private readonly IPipelineStep<TContext> _ifStep;
     private readonly IPipelineStep<TContext> _elseStep;
     private readonly Predicate<TContext> _predicate;
-
-    public IPipelineStep<TContext> NextStep { get; set; }
 
     internal AddIfElseStep(Predicate<TContext> predicate, IPipelineStep<TContext> ifStep, IPipelineStep<TContext> elseStep)
     {
@@ -20,7 +18,7 @@ internal class AddIfElseStep<TContext> : IPipelineStep<TContext>
         _elseStep = elseStep;
     }
 
-    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
+    protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
         if (_predicate(context))
         {
