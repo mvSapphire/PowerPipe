@@ -179,6 +179,19 @@ public PipelineBuilder<TContext, TResult> If(Func<TContext, bool> predicate, Fun
 
 Similar to the previous method, the `If` method adds a nested pipeline, but this time it accepts a predicate with access to the `TContext` object.
 
+#### OnError
+
+```csharp
+public PipelineBuilder<TContext, TResult> OnError(PipelineStepErrorHandling errorHandling, TimeSpan? retryInterval = null, int? maxRetryCount = null, Predicate<TContext> predicate = null)
+```
+
+The `OnError` method adds error-handling behavior to the step. Currently available error handling behaviors: `Suppress` - suppress error and proceed to next step; `Retry` - retry step execution.
+
+Optional parameters:
+`retryInterval` - interval between retries; default value - 1 second.
+`maxRetryCount` - retries count; default value - 1.
+`predicate` - context-based predicate that indicates whether error handling should apply or not.
+
 ##### Build
 
 ```csharp
