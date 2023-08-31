@@ -8,5 +8,3 @@ public class TestPipelineContext : PipelineContext<TestPipelineResult>
     
     public override TestPipelineResult GetPipelineResult() => new();
 }
-
-public record TestPipelineResult;
