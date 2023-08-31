@@ -136,7 +136,7 @@ public class PipelineTests
         var exceptionMessage = "Test message";
 
         step.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
-            .Returns(x => throw new InvalidOperationException(exceptionMessage));
+            .Returns(_ => throw new InvalidOperationException(exceptionMessage));
 
         var context = new TestPipelineContext();
         var cts = new CancellationTokenSource();
@@ -149,7 +149,7 @@ public class PipelineTests
         var retryCount = 3;
         var isRetryBehaviour = errorHandlingBehaviour is PipelineStepErrorHandling.Retry;
 
-        bool ShouldApplyErrorHandling(TestPipelineContext context) => applyErrorHandling;
+        bool ShouldApplyErrorHandling(TestPipelineContext _) => applyErrorHandling;
 
         var pipeline = new PipelineBuilder<TestPipelineContext, TestPipelineResult>(stepFactory, context)
             .Add<TestStep1>()
