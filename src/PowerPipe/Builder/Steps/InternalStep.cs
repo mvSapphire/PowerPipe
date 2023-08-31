@@ -15,13 +15,16 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
 
     protected virtual int? MaxRetryCount { get; private set; }
 
+    protected virtual Predicate<TContext> ErrorHandlingPredicate { get; private set; }
+
     private int RetryCount { get; set; }
 
-    public void ConfigureErrorHandling(PipelineStepErrorHandling errorHandling, TimeSpan? retryInterval, int? maxRetryCount)
+    public void ConfigureErrorHandling(PipelineStepErrorHandling errorHandling, TimeSpan? retryInterval, int? maxRetryCount, Predicate<TContext> predicate)
     {
         ErrorHandlingBehaviour = errorHandling;
         RetryInterval = retryInterval;
         MaxRetryCount = maxRetryCount;
+        ErrorHandlingPredicate = predicate;
     }
 
     public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
@@ -44,6 +47,9 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
 
     protected virtual async Task<bool> HandleExceptionAsync(TContext context, CancellationToken cancellationToken)
     {
+        if (ErrorHandlingPredicate is not null && !ErrorHandlingPredicate(context))
+            return false;
+
         switch (ErrorHandlingBehaviour)
         {
             case PipelineStepErrorHandling.Suppress:

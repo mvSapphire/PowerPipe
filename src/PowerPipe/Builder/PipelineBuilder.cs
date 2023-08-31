@@ -64,7 +64,10 @@ public sealed class PipelineBuilder<TContext, TResult>
         return this;
     }
 
-    public PipelineBuilder<TContext, TResult> OnError(PipelineStepErrorHandling errorHandling, TimeSpan? retryInterval = null, int? maxRetryCount = null)
+    public PipelineBuilder<TContext, TResult> OnError(PipelineStepErrorHandling errorHandling,
+        TimeSpan? retryInterval = null,
+        int? maxRetryCount = null,
+        Predicate<TContext> predicate = null)
     {
         if (errorHandling is PipelineStepErrorHandling.Retry)
         {
@@ -74,7 +77,7 @@ public sealed class PipelineBuilder<TContext, TResult>
 
         var lastStep = _steps[^1];
 
-        lastStep.ConfigureErrorHandling(errorHandling, retryInterval, maxRetryCount);
+        lastStep.ConfigureErrorHandling(errorHandling, retryInterval, maxRetryCount, predicate);
 
         return this;
     }

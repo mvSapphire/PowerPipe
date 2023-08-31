@@ -125,9 +125,11 @@ public class PipelineTests
     }
 
     [Theory]
-    [InlineData(PipelineStepErrorHandling.Suppress)]
-    [InlineData(PipelineStepErrorHandling.Retry)]
-    public async Task OnError_Succeed(PipelineStepErrorHandling errorHandlingBehaviour)
+    [InlineData(PipelineStepErrorHandling.Suppress, true)]
+    [InlineData(PipelineStepErrorHandling.Retry, true)]
+    [InlineData(PipelineStepErrorHandling.Suppress, false)]
+    [InlineData(PipelineStepErrorHandling.Retry, false)]
+    public async Task OnError_Succeed(PipelineStepErrorHandling errorHandlingBehaviour, bool applyErrorHandling)
     {
         var step = Substitute.For<TestStep1>();
 
@@ -147,24 +149,33 @@ public class PipelineTests
         var retryCount = 3;
         var isRetryBehaviour = errorHandlingBehaviour is PipelineStepErrorHandling.Retry;
 
+        bool ShouldApplyErrorHandling(TestPipelineContext context) => applyErrorHandling;
+
         var pipeline = new PipelineBuilder<TestPipelineContext, TestPipelineResult>(stepFactory, context)
             .Add<TestStep1>()
-            .OnError(errorHandlingBehaviour, maxRetryCount: isRetryBehaviour ? retryCount : default)
+                .OnError(errorHandlingBehaviour, maxRetryCount: isRetryBehaviour ? retryCount : default, predicate: ShouldApplyErrorHandling)
             .Build();
 
         var action = () => pipeline.RunAsync(cts.Token);
 
-        if (isRetryBehaviour)
+        if (applyErrorHandling)
         {
-            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage(exceptionMessage);
+            if (isRetryBehaviour)
+            {
+                await action.Should().ThrowAsync<InvalidOperationException>().WithMessage(exceptionMessage);
 
-            await step.Received(1 + retryCount).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+                await step.Received(1 + retryCount).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+            }
+            else
+            {
+                await action.Should().NotThrowAsync<InvalidOperationException>();
+
+                await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+            }
         }
         else
         {
-            await action.Should().NotThrowAsync<InvalidOperationException>();
-
-            await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage(exceptionMessage);
         }
     }
 }
