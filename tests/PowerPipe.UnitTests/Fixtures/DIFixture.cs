@@ -7,7 +7,7 @@ namespace PowerPipe.UnitTests.Fixtures;
 
 public sealed class DIFixture : IDisposable
 {
-    public IServiceCollection ServiceCollection;
+    public readonly IServiceCollection ServiceCollection;
 
     public DIFixture()
     {
