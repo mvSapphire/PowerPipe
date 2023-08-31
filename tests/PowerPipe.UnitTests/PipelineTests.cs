@@ -121,5 +121,3 @@ public class PipelineTests
         await task;
     }
 }
-
-public record TestPipelineResult;
