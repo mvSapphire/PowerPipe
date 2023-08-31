@@ -5,7 +5,7 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-public class LazyStep<TContext> : IPipelineStep<TContext>
+internal class LazyStep<TContext> : InternalStep<TContext>
 {
     private readonly Lazy<IPipelineStep<TContext>> _step;
 
@@ -19,9 +19,7 @@ public class LazyStep<TContext> : IPipelineStep<TContext>
         });
     }
 
-    public IPipelineStep<TContext> NextStep { get; set; }
-
-    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
+    protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
         await _step.Value.ExecuteAsync(context, cancellationToken);
     }

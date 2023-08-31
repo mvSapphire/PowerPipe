@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-public class IfPipelineStep<TContext, TResult> : IPipelineStep<TContext>
+internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
     where TContext : PipelineContext<TResult>
     where TResult : class
 {
@@ -18,9 +17,7 @@ public class IfPipelineStep<TContext, TResult> : IPipelineStep<TContext>
         _pipelineBuilder = pipelineBuilder;
     }
 
-    public IPipelineStep<TContext> NextStep { get; set; }
-
-    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
+    protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
         if (_predicate())
         {
