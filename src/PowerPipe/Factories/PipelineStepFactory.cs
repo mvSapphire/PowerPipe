@@ -17,4 +17,10 @@ public class PipelineStepFactory : IPipelineStepFactory
     {
         return _serviceProvider.GetService(typeof(TStep)) as IPipelineStep<TContext>;
     }
+
+    public IPipelineCompensationStep<TContext> CreateCompensation<TStep, TContext>()
+        where TStep : IPipelineCompensationStep<TContext>
+    {
+        return _serviceProvider.GetService(typeof(TStep)) as IPipelineCompensationStep<TContext>;
+    }
 }
