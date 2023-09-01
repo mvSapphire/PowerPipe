@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PowerPipe.Builder;
 using PowerPipe.Builder.Steps;
+using PowerPipe.Exceptions;
 using PowerPipe.Factories;
 using PowerPipe.UnitTests.Steps;
 
@@ -133,10 +134,8 @@ public class PipelineTests
     {
         var step = Substitute.For<TestStep1>();
 
-        var exceptionMessage = "Test message";
-
         step.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
-            .Returns(_ => throw new InvalidOperationException(exceptionMessage));
+            .Returns(_ => throw new InvalidOperationException("Test message"));
 
         var context = new TestPipelineContext();
         var cts = new CancellationTokenSource();
@@ -162,20 +161,20 @@ public class PipelineTests
         {
             if (isRetryBehaviour)
             {
-                await action.Should().ThrowAsync<InvalidOperationException>().WithMessage(exceptionMessage);
+                await action.Should().ThrowAsync<PipelineExecutionException>();
 
                 await step.Received(1 + retryCount).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
             }
             else
             {
-                await action.Should().NotThrowAsync<InvalidOperationException>();
+                await action.Should().NotThrowAsync<PipelineExecutionException>();
 
                 await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
             }
         }
         else
         {
-            await action.Should().ThrowAsync<InvalidOperationException>().WithMessage(exceptionMessage);
+            await action.Should().ThrowAsync<PipelineExecutionException>();
         }
     }
 }
