@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using PowerPipe.Exceptions;
 using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
@@ -33,12 +34,12 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
         {
             await ExecuteInternalAsync(context, cancellationToken);
         }
-        catch (Exception)
+        catch (Exception e) when (e is not PipelineExecutionException)
         {
             var errorHandleSucceed = await HandleExceptionAsync(context, cancellationToken);
 
             if(!errorHandleSucceed)
-                throw;
+                throw new PipelineExecutionException(e);
         }
     }
 
