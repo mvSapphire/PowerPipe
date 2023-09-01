@@ -196,7 +196,7 @@ public class PipelineTests
         var stepFactory =
             new PipelineStepFactory(new ServiceCollection()
                 .AddPowerPipeStep<TestStep1, TestPipelineContext>()
-                .AddPowerPipeStep<TestStep2, TestPipelineContext>()
+                .AddTransient(_ => step2)
                 .AddTransient(_ => compensationStep)
                 .BuildServiceProvider());
 

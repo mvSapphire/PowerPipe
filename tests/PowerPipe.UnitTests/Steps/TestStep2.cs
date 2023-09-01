@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
@@ -9,6 +8,6 @@ public class TestStep2 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
-        throw new Exception();
+    public virtual async Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+        await NextStep.ExecuteAsync(context, cancellationToken);
 }
