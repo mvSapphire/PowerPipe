@@ -9,7 +9,7 @@ internal class CompensationStep<TContext> : IPipelineCompensationStep<TContext>
 {
     private readonly Lazy<IPipelineCompensationStep<TContext>> _step;
 
-    public IPipelineCompensationStep<TContext> NextCompensationStep { get; set; }
+    public bool IsCompensated { get; private set; }
 
     internal CompensationStep(Func<IPipelineCompensationStep<TContext>> factory)
     {
@@ -22,11 +22,8 @@ internal class CompensationStep<TContext> : IPipelineCompensationStep<TContext>
 
     public async Task CompensateAsync(TContext context, CancellationToken cancellationToken)
     {
-        await _step.Value.CompensateAsync(context, cancellationToken);
+        IsCompensated = true;
 
-        if (NextCompensationStep is not null)
-        {
-            await NextCompensationStep.CompensateAsync(context, cancellationToken);
-        }
+        await _step.Value.CompensateAsync(context, cancellationToken);
     }
 }

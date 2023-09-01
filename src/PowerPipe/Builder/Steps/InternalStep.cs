@@ -10,7 +10,9 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
 {
     public IPipelineStep<TContext> NextStep { get; set; }
 
-    public IPipelineCompensationStep<TContext> CompensationStep { get; set; }
+    public CompensationStep<TContext> CompensationStep { get; set; }
+
+    protected virtual bool IsExecuted { get; set; }
 
     protected virtual PipelineStepErrorHandling? ErrorHandlingBehaviour { get; private set; }
 
@@ -40,15 +42,13 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
         {
             var errorHandleSucceed = await HandleExceptionAsync(context, cancellationToken);
 
-            if(!errorHandleSucceed)
-            {
-                if (CompensationStep is not null)
-                {
-                    await CompensationStep.CompensateAsync(context, cancellationToken);
-                }
-
+            if (!errorHandleSucceed)
                 throw new PipelineExecutionException(e);
-            }
+        }
+        finally
+        {
+            if (CompensationStep is not null && !CompensationStep.IsCompensated && IsExecuted)
+                await CompensationStep.CompensateAsync(context, cancellationToken);
         }
     }
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using PowerPipe.Builder.Steps;
 using PowerPipe.Interfaces;
 
 namespace PowerPipe;
@@ -34,15 +33,7 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
     {
         for (var i = 0; i < steps.Count - 1; i++)
         {
-            var currentStep = steps[i] as InternalStep<TContext>;
-            var nextStep = steps[i + 1] as InternalStep<TContext>;
-
-            currentStep!.NextStep = nextStep;
-
-            if (nextStep!.CompensationStep is CompensationStep<TContext> nextStepCompensation)
-            {
-                nextStepCompensation.NextCompensationStep = currentStep.CompensationStep;
-            }
+            steps[i].NextStep = steps[i + 1];
         }
     }
 }
