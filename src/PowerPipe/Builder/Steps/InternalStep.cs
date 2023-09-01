@@ -40,13 +40,15 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
         {
             var errorHandleSucceed = await HandleExceptionAsync(context, cancellationToken);
 
-            if (CompensationStep is not null)
-            {
-                await CompensationStep.CompensateAsync(context, cancellationToken);
-            }
-
             if(!errorHandleSucceed)
+            {
+                if (CompensationStep is not null)
+                {
+                    await CompensationStep.CompensateAsync(context, cancellationToken);
+                }
+
                 throw new PipelineExecutionException(e);
+            }
         }
     }
 
