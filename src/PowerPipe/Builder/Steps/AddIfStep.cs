@@ -20,7 +20,7 @@ internal class AddIfStep<TContext> : InternalStep<TContext>
     {
         if (_predicate(context))
         {
-            IsExecuted = true;
+            StepExecuted = true;
 
             _step.NextStep = NextStep;
 

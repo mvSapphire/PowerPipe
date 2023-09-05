@@ -21,7 +21,7 @@ internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
     {
         if (_predicate())
         {
-            IsExecuted = true;
+            StepExecuted = true;
 
             await _pipelineBuilder.Build().RunAsync(cancellationToken, returnResult: false);
         }

@@ -20,7 +20,7 @@ internal class AddIfElseStep<TContext> : InternalStep<TContext>
 
     protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
-        IsExecuted = true;
+        StepExecuted = true;
 
         if (_predicate(context))
         {
