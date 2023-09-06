@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PowerPipe.Builder;
 using PowerPipe.Builder.Steps;
+using PowerPipe.Extensions.MicrosoftDependencyInjection;
 using PowerPipe.Exceptions;
 using PowerPipe.Factories;
 using PowerPipe.UnitTests.Steps;
@@ -176,5 +177,40 @@ public class PipelineTests
         {
             await action.Should().ThrowAsync<PipelineExecutionException>();
         }
+    }
+
+    [Fact]
+    public async Task CompensateWith_Succeed()
+    {
+        var step2 = Substitute.For<TestStep2>();
+        var compensationStep = Substitute.For<TestCompensationStep>();
+
+        var exceptionMessage = "Test message";
+
+        step2.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
+            .Returns(_ => throw new InvalidOperationException(exceptionMessage));
+
+        var context = new TestPipelineContext();
+        var cts = new CancellationTokenSource();
+
+        var stepFactory =
+            new PipelineStepFactory(new ServiceCollection()
+                .AddPowerPipeStep<TestStep1, TestPipelineContext>()
+                .AddTransient(_ => step2)
+                .AddTransient(_ => compensationStep)
+                .BuildServiceProvider());
+
+        var pipeline = new PipelineBuilder<TestPipelineContext, TestPipelineResult>(stepFactory, context)
+            .Add<TestStep1>()
+                .CompensateWith<TestCompensationStep>()
+            .Add<TestStep2>()
+                .CompensateWith<TestCompensationStep>()
+            .Build();
+
+        var action = () => pipeline.RunAsync(cts.Token);
+
+        await action.Should().ThrowAsync<Exception>();
+
+        await compensationStep.Received(2).CompensateAsync(Arg.Is(context), Arg.Is(cts.Token));
     }
 }

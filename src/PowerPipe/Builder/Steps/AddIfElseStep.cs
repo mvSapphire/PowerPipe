@@ -20,6 +20,8 @@ internal class AddIfElseStep<TContext> : InternalStep<TContext>
 
     protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
+        StepExecuted = true;
+
         if (_predicate(context))
         {
             _ifStep.NextStep = NextStep;

@@ -8,6 +8,6 @@ public class TestStep2 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
+    public virtual async Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+        await NextStep.ExecuteAsync(context, cancellationToken);
 }

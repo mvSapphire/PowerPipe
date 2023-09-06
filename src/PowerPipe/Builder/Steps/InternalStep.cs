@@ -10,6 +10,10 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
 {
     public IPipelineStep<TContext> NextStep { get; set; }
 
+    public CompensationStep<TContext> CompensationStep { get; set; }
+
+    protected virtual bool StepExecuted { get; set; }
+
     protected virtual PipelineStepErrorHandling? ErrorHandlingBehaviour { get; private set; }
 
     protected virtual TimeSpan? RetryInterval { get; private set; }
@@ -19,6 +23,8 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
     protected virtual Predicate<TContext> ErrorHandlingPredicate { get; private set; }
 
     private int RetryCount { get; set; }
+
+    private bool AllowedToCompensate => StepExecuted && CompensationStep?.IsCompensated == false;
 
     public void ConfigureErrorHandling(PipelineStepErrorHandling errorHandling, TimeSpan? retryInterval, int? maxRetryCount, Predicate<TContext> predicate)
     {
@@ -38,8 +44,13 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
         {
             var errorHandleSucceed = await HandleExceptionAsync(context, cancellationToken);
 
-            if(!errorHandleSucceed)
+            if (!errorHandleSucceed)
                 throw new PipelineExecutionException(e);
+        }
+        finally
+        {
+            if (AllowedToCompensate)
+                await CompensationStep.CompensateAsync(context, cancellationToken);
         }
     }
 

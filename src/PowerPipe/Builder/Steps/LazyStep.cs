@@ -21,6 +21,8 @@ internal class LazyStep<TContext> : InternalStep<TContext>
 
     protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
+        StepExecuted = true;
+
         await _step.Value.ExecuteAsync(context, cancellationToken);
     }
 }

@@ -109,6 +109,8 @@ The `ExecuteAsync` method is the core logic execution point for a pipeline step.
 
 Several steps are implemented and executed internally, contributing to the pipeline flow. While they are abstracted away, it's beneficial to be aware of them.
 
+- **InternalStep:** An abstract class that is base for all internal steps.
+
 - **LazyStep:** A step that acts as a 'decorator' for other steps, ensuring thread safety.
 
 - **AddIfStep:** Adds a step to the main pipeline based on a specified predicate.
@@ -116,6 +118,8 @@ Several steps are implemented and executed internally, contributing to the pipel
 - **AddIfElseStep:** Adds a step to the pipeline conditionally, branching based on a predicate.
 
 - **IfPipelineStep:** Adds a nested pipeline based on a predicate.
+
+- **CompensationStep:** Adds compensation step and handles compensation of parent steps.
 
 - **FinishStep:** Automatically added as the final step of the pipeline.
 
@@ -191,6 +195,16 @@ Optional parameters:
 `retryInterval` - interval between retries; default value - 1 second.
 `maxRetryCount` - retries count; default value - 1.
 `predicate` - context-based predicate that indicates whether error handling should apply or not.
+
+#### CompensateWith
+
+```csharp
+public PipelineBuilder<TContext, TResult> CompensateWith<T>()
+```
+
+The `CompensateWith` method adds compensation step to the previous added step in pipeline.
+
+> Note! That `CompensationWith` method can be applied to the internal pipeline step as well for the whole internal pipeline
 
 ##### Build
 

@@ -14,6 +14,8 @@ public sealed class PipelineBuilder<TContext, TResult>
     private readonly IPipelineStepFactory _pipelineStepFactory;
     private readonly TContext _context;
 
+    private InternalStep<TContext> LastStep => _steps[^1];
+
     public PipelineBuilder(IPipelineStepFactory pipelineStepFactory, TContext context)
     {
         _ = pipelineStepFactory ?? throw new ArgumentNullException(nameof(pipelineStepFactory));
@@ -75,9 +77,15 @@ public sealed class PipelineBuilder<TContext, TResult>
             maxRetryCount ??= 1;
         }
 
-        var lastStep = _steps[^1];
+        LastStep.ConfigureErrorHandling(errorHandling, retryInterval, maxRetryCount, predicate);
 
-        lastStep.ConfigureErrorHandling(errorHandling, retryInterval, maxRetryCount, predicate);
+        return this;
+    }
+
+    public PipelineBuilder<TContext, TResult> CompensateWith<T>()
+        where T : IPipelineCompensationStep<TContext>
+    {
+        LastStep.CompensationStep = new CompensationStep<TContext>(_pipelineStepFactory.CreateCompensation<T, TContext>);
 
         return this;
     }
