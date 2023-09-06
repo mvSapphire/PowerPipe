@@ -9,43 +9,42 @@ public sealed class PipelineBuilder<TContext, TResult>
     where TContext : PipelineContext<TResult>
     where TResult : class
 {
-    private readonly List<InternalStep<TContext>> _steps = new();
-
     private readonly IPipelineStepFactory _pipelineStepFactory;
-    private readonly TContext _context;
+    private volatile TContext _context;
 
-    private InternalStep<TContext> LastStep => _steps[^1];
+    internal List<InternalStep<TContext>> Steps { get; } = new();
+    private InternalStep<TContext> LastStep => Steps[^1];
 
     public PipelineBuilder(IPipelineStepFactory pipelineStepFactory, TContext context)
     {
-        _ = pipelineStepFactory ?? throw new ArgumentNullException(nameof(pipelineStepFactory));
-        _ = context ?? throw new ArgumentNullException(nameof(context));
+        ArgumentNullException.ThrowIfNull(pipelineStepFactory);
+        ArgumentNullException.ThrowIfNull(context);
 
         _pipelineStepFactory = pipelineStepFactory;
         _context = context;
     }
 
     public PipelineBuilder<TContext, TResult> Add<T>()
-        where T : IPipelineStep<TContext>
+        where T : IStepBase<TContext>
     {
-        _steps.Add(new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>));
+        Steps.Add(new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>));
 
         return this;
     }
 
     public PipelineBuilder<TContext, TResult> AddIf<T>(Predicate<TContext> predicate)
-        where T : IPipelineStep<TContext>
+        where T : IStepBase<TContext>
     {
-        _steps.Add(new AddIfStep<TContext>(predicate, new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>)));
+        Steps.Add(new AddIfStep<TContext>(predicate, new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>)));
 
         return this;
     }
 
     public PipelineBuilder<TContext, TResult> AddIfElse<TIf, TElse>(Predicate<TContext> predicate)
-        where TIf : IPipelineStep<TContext>
-        where TElse : IPipelineStep<TContext>
+        where TIf : IStepBase<TContext>
+        where TElse : IStepBase<TContext>
     {
-        _steps.Add(new AddIfElseStep<TContext>(
+        Steps.Add(new AddIfElseStep<TContext>(
             predicate,
             new LazyStep<TContext>(_pipelineStepFactory.Create<TIf, TContext>),
             new LazyStep<TContext>(_pipelineStepFactory.Create<TElse, TContext>)));
@@ -54,29 +53,28 @@ public sealed class PipelineBuilder<TContext, TResult>
     }
 
     public PipelineBuilder<TContext, TResult> If(
-        Func<TContext, bool> predicate,
-        Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action) => If(() => predicate(_context), action);
-
-    public PipelineBuilder<TContext, TResult> If(Func<bool> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
+        Predicate<TContext> predicate, Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action)
     {
-        var whenBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
+        var internalBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
 
-        _steps.Add(new IfPipelineStep<TContext, TResult>(predicate, whenBuilder));
+        Steps.Add(new IfPipelineStep<TContext, TResult>(predicate, internalBuilder));
+
+        return this;
+    }
+
+    public PipelineBuilder<TContext, TResult> Parallel(
+        Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action, int maxDegreeOfParallelism = -1)
+    {
+        var internalBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
+
+        Steps.Add(new ParallelStep<TContext, TResult>(maxDegreeOfParallelism, internalBuilder));
 
         return this;
     }
 
     public PipelineBuilder<TContext, TResult> OnError(PipelineStepErrorHandling errorHandling,
-        TimeSpan? retryInterval = null,
-        int? maxRetryCount = null,
-        Predicate<TContext> predicate = null)
+        TimeSpan? retryInterval = null, int? maxRetryCount = null, Predicate<TContext> predicate = null)
     {
-        if (errorHandling is PipelineStepErrorHandling.Retry)
-        {
-            retryInterval ??= TimeSpan.FromSeconds(1);
-            maxRetryCount ??= 1;
-        }
-
         LastStep.ConfigureErrorHandling(errorHandling, retryInterval, maxRetryCount, predicate);
 
         return this;
@@ -92,8 +90,8 @@ public sealed class PipelineBuilder<TContext, TResult>
 
     public IPipeline<TResult> Build()
     {
-        _steps.Add(new FinishStep<TContext>());
+        Steps.Add(new FinishStep<TContext>());
 
-        return new Pipeline<TContext, TResult>(_context, _steps);
+        return new Pipeline<TContext, TResult>(_context, Steps);
     }
 }

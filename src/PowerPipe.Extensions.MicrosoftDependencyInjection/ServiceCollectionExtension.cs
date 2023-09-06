@@ -21,7 +21,7 @@ public static class ServiceCollectionExtension
 
     public static IServiceCollection AddPowerPipeStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
-        where TStep : class, IPipelineStep<TContext>
+        where TStep : class, IStepBase<TContext>
         where TContext : class
     {
         return lifetime switch

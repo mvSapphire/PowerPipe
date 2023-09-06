@@ -34,6 +34,15 @@ class Program
         services.AddPowerPipeStep<SampleStep6, SamplePipelineContext>();
         services.AddPowerPipeStep<SampleStep7, SamplePipelineContext>();
         services.AddPowerPipeCompensationStep<SampleStep7Compensation, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleStep1, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleParallelStep1, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleParallelStep2, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleParallelStep3, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleParallelStep4, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleParallelStep5, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleParallelStep6, SamplePipelineContext>();
+        services.AddPowerPipeStep<SampleParallelStep7, SamplePipelineContext>();
+        services.AddPowerPipeCompensationStep<SampleParallelStep5Compensation, SamplePipelineContext>();
 
         services.AddSingleton<SamplePipeline>();
 
