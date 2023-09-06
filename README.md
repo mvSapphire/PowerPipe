@@ -101,9 +101,31 @@ public interface IPipelineStep<TContext>
 }
 ```
 
+#### IPipelineParallelStep Interface
+
+The `IPipelineParallelStep` interface defines the blueprint for creating custom parallel pipeline steps.
+
+```csharp
+public interface IPipelineParallelStep<TContext>
+{
+    Task ExecuteAsync(TContext context, CancellationToken cancellationToken);
+}
+```
+
 ##### ExecuteAsync Method
 
 The `ExecuteAsync` method is the core logic execution point for a pipeline step.
+
+#### IPipelineCompensationStep Interface
+
+The `IPipelineParallelStep` interface defines the blueprint for creating custom compensation steps.
+
+```csharp
+public interface IPipelineCompensationStep<TContext>
+{
+    Task CompensateAsync(TContext context, CancellationToken cancellationToken);
+}
+```
 
 #### Pre-implemented Steps
 
@@ -120,6 +142,8 @@ Several steps are implemented and executed internally, contributing to the pipel
 - **IfPipelineStep:** Adds a nested pipeline based on a predicate.
 
 - **CompensationStep:** Adds compensation step and handles compensation of parent steps.
+
+- **ParallelStep:** Adds step that handles parallel step execution.
 
 - **FinishStep:** Automatically added as the final step of the pipeline.
 
@@ -206,6 +230,14 @@ The `CompensateWith` method adds compensation step to the previous added step in
 
 > Note! That `CompensationWith` method can be applied to the internal pipeline step as well for the whole internal pipeline
 
+#### Parallel
+
+```csharp
+public PipelineBuilder<TContext, TResult> Parallel(Func<PipelineBuilder<TContext, TResult>, PipelineBuilder<TContext, TResult>> action, int maxDegreeOfParallelism = -1)
+```
+
+The `Parallel` method adds a nested pipeline that is responsible for adding steps for parallel execution.
+
 ##### Build
 
 ```csharp
@@ -234,6 +266,16 @@ The `AddPowerPipe` method adds the `IPipelineStepFactory` to the Dependency Inje
 public static IServiceCollection AddPowerPipeStep<TStep, TContext>(this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
     where TStep : class, IPipelineStep<TContext>
     where TContext : PipelineContext<Type>
+```
+
+The `AddPowerPipeStep` method adds your custom pipeline steps to the Dependency Injection container with a transient scope by default.
+
+##### AddPowerPipeCompensationStep
+
+```csharp
+public static IServiceCollection AddPowerPipeCompensationStep<TStep, TContext>(this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
+    where TStep : class, IPipelineCompensationStep<TContext>
+    where TContext : class
 ```
 
 The `AddPowerPipeStep` method adds your custom pipeline steps to the Dependency Injection container with a transient scope by default.
