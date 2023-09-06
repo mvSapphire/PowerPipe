@@ -21,8 +21,20 @@ public class SamplePipeline
     public IPipeline<SamplePipelineResult> SetupPipeline()
     {
         var context = new SamplePipelineContext();
+        
 
         var builder = new PipelineBuilder<SamplePipelineContext, SamplePipelineResult>(_pipelineStepFactory, context)
+            .Parallel(b => b
+                .Add<SampleParallelStep1>()
+                .Add<SampleParallelStep2>()
+                .Add<SampleParallelStep3>()
+                .Add<SampleParallelStep4>()
+                    .OnError(PipelineStepErrorHandling.Suppress)
+                .Add<SampleParallelStep5>()
+                    .OnError(PipelineStepErrorHandling.Retry)
+                    .CompensateWith<SampleParallelStep5Compensation>()
+                .Add<SampleParallelStep6>()
+                .Add<SampleParallelStep7>())
             .Add<SampleStep1>()
                 .CompensateWith<SampleStep1Compensation>()
             .AddIf<SampleStep2>(Step2ExecutionAllowed)
@@ -46,6 +58,8 @@ public record SamplePipelineResult;
 
 public class SamplePipelineContext : PipelineContext<SamplePipelineResult>
 {
+    public int Test1 { get; set; }
+
     public override SamplePipelineResult GetPipelineResult() => null;
 };
 

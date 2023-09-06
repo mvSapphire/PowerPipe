@@ -6,7 +6,7 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
+internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipelineParallelStep<TContext>
 {
     public IPipelineStep<TContext> NextStep { get; set; }
 
@@ -24,10 +24,18 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
 
     private int RetryCount { get; set; }
 
-    private bool AllowedToCompensate => StepExecuted && CompensationStep?.IsCompensated == false;
+    private bool? ErrorHandledSucceed { get; set; }
+
+    private bool AllowedToCompensate => StepExecuted && ErrorHandledSucceed == false && CompensationStep?.IsCompensated == false;
 
     public void ConfigureErrorHandling(PipelineStepErrorHandling errorHandling, TimeSpan? retryInterval, int? maxRetryCount, Predicate<TContext> predicate)
     {
+        if (errorHandling is PipelineStepErrorHandling.Retry)
+        {
+            retryInterval ??= TimeSpan.FromSeconds(1);
+            maxRetryCount ??= 1;
+        }
+
         ErrorHandlingBehaviour = errorHandling;
         RetryInterval = retryInterval;
         MaxRetryCount = maxRetryCount;
@@ -40,11 +48,17 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>
         {
             await ExecuteInternalAsync(context, cancellationToken);
         }
-        catch (Exception e) when (e is not PipelineExecutionException)
+        catch (Exception e)
         {
-            var errorHandleSucceed = await HandleExceptionAsync(context, cancellationToken);
+            if (e is PipelineExecutionException)
+            {
+                ErrorHandledSucceed = false;
+                throw;
+            }
 
-            if (!errorHandleSucceed)
+            ErrorHandledSucceed = await HandleExceptionAsync(context, cancellationToken);
+
+            if (!ErrorHandledSucceed.Value)
                 throw new PipelineExecutionException(e);
         }
         finally

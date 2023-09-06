@@ -8,10 +8,10 @@ internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
     where TContext : PipelineContext<TResult>
     where TResult : class
 {
-    private readonly Func<bool> _predicate;
+    private readonly Predicate<TContext> _predicate;
     private readonly PipelineBuilder<TContext, TResult> _pipelineBuilder;
 
-    public IfPipelineStep(Func<bool> predicate, PipelineBuilder<TContext, TResult> pipelineBuilder)
+    public IfPipelineStep(Predicate<TContext> predicate, PipelineBuilder<TContext, TResult> pipelineBuilder)
     {
         _predicate = predicate;
         _pipelineBuilder = pipelineBuilder;
@@ -19,7 +19,7 @@ internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
 
     protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
-        if (_predicate())
+        if (_predicate(context))
         {
             StepExecuted = true;
 
