@@ -6,6 +6,8 @@
 
 PowerPipe is a versatile .NET library designed to streamline the process of building advanced pipelines using a fluent interface. The primary objective of this project is to eliminate the need for writing boilerplate code when implementing pipelines.
 
+[Medium article](https://medium.com/@m.vorchakov97/from-chaos-to-clarity-enhance-data-processing-with-powerpipe-in-net-262ac34a4923)
+
 **Table of Contents**
 - [Features and Benefits](#features-and-benefits)
 - [Installation](#installation)
