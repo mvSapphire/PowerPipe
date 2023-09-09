@@ -1,4 +1,4 @@
-# PowerPipe A .NET Library for Constructing Advanced Pipelines with Fluent Interface
+# PowerPipe: A .NET Library for Constructing Advanced Pipelines with Fluent Interface
 
 <span align="center">
 
