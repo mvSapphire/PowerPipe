@@ -18,6 +18,7 @@ If you like this project give it a star 🌟
 
 - Lightweight
 - Fluent API
+- Ease & Structured Workflow construction
 - Dependency Injection support
 - Developed using .NET 6
 
