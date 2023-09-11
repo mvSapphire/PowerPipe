@@ -1,4 +1,4 @@
-# PowerPipe: A .NET Library for Constructing Advanced Pipelines with Fluent Interface
+# PowerPipe: A .NET Library for Constructing Advanced Workflows with Fluent Interface
 
 <span align="center">
 
@@ -80,12 +80,12 @@ dotnet add package PowerPipe.Extensions.MicrosoftDependencyInjection
 ```csharp
 public class SampleContext : PipelineContext<SampleResult>  
 {  
-	// Properties and methods specific to the context  
+    // Properties and methods specific to the context  
 }
 
 public class SampleResult
 {
-	// Implementation details
+    // Implementation details
 }
 ```
 
@@ -94,12 +94,12 @@ public class SampleResult
 ```csharp
 public class SampleStep1 : IPipelineStep<SampleContext>  
 {  
-	// Implementation details…
+    // Implementation details…
 }
   
 public  class  SampleStep2 : IPipelineStep<OrderContext>  
 {  
-	// Implementation details…
+    // Implementation details…
 }
 ```
 
@@ -109,9 +109,9 @@ public  class  SampleStep2 : IPipelineStep<OrderContext>
 
 ```csharp
 var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
-	.Add<SampleStep1>()
-	.Add<SampleStep2>()
-	.Build();
+    .Add<SampleStep1>()
+    .Add<SampleStep2>()
+    .Build();
 ```
 
 - Use `AddIf<T>` method to add a step to the pipeline based on the predicate 
@@ -119,36 +119,36 @@ var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
 ```csharp
 // Define predicate based on context
 private bool ExecuteStep2(OrderProcessingContext context) =>
-	context.ExecuteStep2Allowed;
+    context.ExecuteStep2Allowed;
 
 var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
-	.Add<SampleStep1>()
-	.AddIf<SampleStep2>(ExecuteStep2) 
-	.Build();
+    .Add<SampleStep1>()
+    .AddIf<SampleStep2>(ExecuteStep2) 
+    .Build();
 ```
 
 - Use `AddIfElse<TFirst, TSecond>` method to add one of the steps by the predicate
 
 ```csharp
 private bool ExecuteStep2(OrderProcessingContext context) =>
-	context.ExecuteStep2Allowed;
+    context.ExecuteStep2Allowed;
 
 var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
-	.AddIfElse<SampleStep1, SampleStep2>(ExecuteStep2) 
-	.Build();
+    .AddIfElse<SampleStep1, SampleStep2>(ExecuteStep2) 
+    .Build();
 ```
 
 - Use `If` method to add a nested pipeline based on a predicate
 
 ```csharp
 private bool ExecuteNestedPipeline(OrderProcessingContext context) =>
-	context.ExecuteNestedPipelineAllowed;
+    context.ExecuteNestedPipelineAllowed;
 
 var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
-	.If(ExecuteNestedPipeline, b => b
-		.Add<SampleStep1>()
-		.Add<SampleStep2>())
-	.Build();
+    .If(ExecuteNestedPipeline, b => b
+        .Add<SampleStep1>()
+        .Add<SampleStep2>())
+    .Build();
 ```
 
 - Use `Parallel` method to execute your steps in parallel
@@ -157,10 +157,10 @@ var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
 
 ```csharp
 var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
-	.Parallel(b => b  
-		.Add<SampleParallelStep1>()
-		.Add<SampleParallelStep2>(), maxDegreeOfParallelism: 3)
-	.Build();
+    .Parallel(b => b  
+        .Add<SampleParallelStep1>()
+        .Add<SampleParallelStep2>(), maxDegreeOfParallelism: 3)
+    .Build();
 ```
 
 - Use `OnError` method to add error-handling behavior
@@ -169,9 +169,9 @@ var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
 
 ```csharp
 var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
-	.Add<SampleStep1>()
-		.OnError(PipelineStepErrorHandling.Retry)
-	.Build();
+    .Add<SampleStep1>()
+        .OnError(PipelineStepErrorHandling.Retry)
+    .Build();
 ```
 
 - Use `CompensateWith` method to add a compensation step to the previously added step in the pipeline
@@ -182,9 +182,9 @@ var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
 public class SampleStep1Compensation : IPipelineCompensationStep<SampleContext> {}
 
 var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
-	.Add<SampleStep1>()
-		.CompensateWith<SampleStep1Compensation>()
-	.Build();
+    .Add<SampleStep1>()
+        .CompensateWith<SampleStep1Compensation>()
+    .Build();
 ```
 
 4. **Extensions: Microsoft Dependency Injection**
@@ -200,11 +200,11 @@ public static IServiceCollection AddPowerPipe(this IServiceCollection serviceCol
 
 ```csharp
 services  
-	.AddPowerPipeStep<SampleStep1, SampleContext>()
-	.AddPowerPipeParallelStep<SampleParallelStep1, SampleContext>()
-	.AddPowerPipeCompensationStep<SampleStep1Compensation, SampleContext>()
-	// other steps ...  
-	;
+    .AddPowerPipeStep<SampleStep1, SampleContext>()
+    .AddPowerPipeParallelStep<SampleParallelStep1, SampleContext>()
+    .AddPowerPipeCompensationStep<SampleStep1Compensation, SampleContext>()
+    // other steps ...  
+    ;
 ```
 
 Check out [sample project](samples/PowerPipe.Sample) 👀
