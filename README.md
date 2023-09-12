@@ -1,4 +1,6 @@
-# 🚀 PowerPipe: A .NET Library for Constructing Advanced Workflows with Fluent Interface
+<p align="center">
+  <img src="https://github.com/mvSapphire/PowerPipe/blob/master/assets/readme-header.jpeg?raw=true" alt="drawing" width="250"/>
+</p>
 
 <span align="center">
 
@@ -7,6 +9,8 @@
 [![Nuget](https://img.shields.io/nuget/dt/PowerPipe)](https://www.nuget.org/stats/packages/PowerPipe?groupby=Version)
 
 </span>
+
+# A .NET Library for Constructing Advanced Workflows with Fluent Interface
 
 PowerPipe is a versatile .NET library designed to streamline the process of building advanced workflows using a fluent interface. The primary objective of this project is to eliminate the need for writing boilerplate code when implementing workflows.
 
