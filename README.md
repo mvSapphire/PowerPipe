@@ -1,4 +1,4 @@
-# PowerPipe: A .NET Library for Constructing Advanced Workflows with Fluent Interface
+# 🚀 PowerPipe: A .NET Library for Constructing Advanced Workflows with Fluent Interface
 
 <span align="center">
 
@@ -8,21 +8,21 @@
 
 </span>
 
-🚀 PowerPipe is a versatile .NET library designed to streamline the process of building advanced workflows using a fluent interface. The primary objective of this project is to eliminate the need for writing boilerplate code when implementing workflows.
+PowerPipe is a versatile .NET library designed to streamline the process of building advanced workflows using a fluent interface. The primary objective of this project is to eliminate the need for writing boilerplate code when implementing workflows.
 
 Check out [Medium article](https://medium.com/@m.vorchakov97/from-chaos-to-clarity-enhance-data-processing-with-powerpipe-in-net-262ac34a4923) 👀
 
 If you like this project give it a star 🌟
 
-## Features and Benefits
+## 🔥 Features and Benefits
 
 - Lightweight
-- Fluent API
+- Fluent interface
 - Ease & Structured Workflow construction
 - Dependency Injection support
 - Developed using .NET 6
 
-## Sample use case
+## 🧐 Sample use case
 
 Imagine creating an e-commerce platform. The platform must process incoming customer orders, each demanding validation, inventory updates, and potentially more intricate steps.
 
@@ -57,7 +57,7 @@ public  class  ECommercePipelineService : IECommercePipelineService
 }
 ```
 
-## Getting started
+## 🛠️ Getting started
 
 ### Installation
 
