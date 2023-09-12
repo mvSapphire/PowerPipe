@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/mvSapphire/PowerPipe/blob/master/assets/readme-header.jpeg?raw=true" alt="drawing" width="250"/>
+  <img src="https://github.com/mvSapphire/PowerPipe/blob/master/assets/readme-header.png?raw=true" alt="drawing" width="250"/>
 </p>
 
 <span align="center">
