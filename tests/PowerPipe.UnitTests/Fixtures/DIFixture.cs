@@ -15,6 +15,8 @@ public sealed class DIFixture : IDisposable
         services.AddPowerPipe();
         services.AddPowerPipeStep<TestStep1, TestPipelineContext>();
         services.AddPowerPipeStep<TestStep2, TestPipelineContext>();
+        services.AddPowerPipeStep<TestParallelStep, TestPipelineContext>();
+        services.AddPowerPipeCompensationStep<TestCompensationStep, TestPipelineContext>();
 
         ServiceCollection = services;
     }
