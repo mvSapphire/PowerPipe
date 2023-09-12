@@ -5,6 +5,7 @@
 <span align="center">
 
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mvSapphire/PowerPipe/build.yml)](https://github.com/mvSapphire/PowerPipe/actions)
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mvSapphire/87b833b49852f7f088e1d4d913600a91/raw/code-coverage.json)
 [![Nuget](https://img.shields.io/nuget/v/PowerPipe)](https://www.nuget.org/packages/PowerPipe)
 [![Nuget](https://img.shields.io/nuget/dt/PowerPipe)](https://www.nuget.org/stats/packages/PowerPipe?groupby=Version)
 
