@@ -9,6 +9,6 @@ public class TestStep2 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public virtual async Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
         throw new InvalidOperationException();
 }
