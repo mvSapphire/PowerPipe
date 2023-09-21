@@ -26,6 +26,7 @@ internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
             await _pipelineBuilder.Build().RunAsync(cancellationToken, returnResult: false);
         }
 
-        await NextStep.ExecuteAsync(context, cancellationToken);
+        if (NextStep is not null)
+            await NextStep.ExecuteAsync(context, cancellationToken);
     }
 }

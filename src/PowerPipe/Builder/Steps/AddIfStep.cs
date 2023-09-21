@@ -28,7 +28,8 @@ internal class AddIfStep<TContext> : InternalStep<TContext>
         }
         else
         {
-            await NextStep.ExecuteAsync(context, cancellationToken);
+            if (NextStep is not null)
+                await NextStep.ExecuteAsync(context, cancellationToken);
         }
     }
 }
