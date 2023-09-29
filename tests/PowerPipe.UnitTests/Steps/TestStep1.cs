@@ -8,9 +8,9 @@ public class TestStep1 : IPipelineStep<TestPipelineContext>
 {
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
+    public virtual async Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
     {
         context.Step1RunCount++;
-        return Task.CompletedTask;
+        await NextStep.ExecuteAsync(context, cancellationToken);
     }
 }

@@ -20,6 +20,8 @@ internal class AddIfStep<TContext> : InternalStep<TContext>
     {
         if (_predicate(context))
         {
+            StepExecuted = true;
+
             _step.NextStep = NextStep;
 
             await _step.ExecuteAsync(context, cancellationToken);

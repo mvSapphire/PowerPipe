@@ -18,7 +18,7 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
 
         _initStep = steps[0];
 
-        SetNextSteps(steps);
+        SetupSteps(steps);
     }
 
     public async Task<TResult> RunAsync(CancellationToken cancellationToken, bool returnResult = true)
@@ -29,7 +29,7 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
         return returnResult ? _context.GetPipelineResult() : null;
     }
 
-    private static void SetNextSteps(IReadOnlyList<IPipelineStep<TContext>> steps)
+    private static void SetupSteps(IReadOnlyList<IPipelineStep<TContext>> steps)
     {
         for (var i = 0; i < steps.Count - 1; i++)
         {
