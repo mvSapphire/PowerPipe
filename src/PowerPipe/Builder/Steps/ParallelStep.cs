@@ -28,6 +28,7 @@ internal class ParallelStep<TContext, TResult> : InternalStep<TContext>
 
         await Parallel.ForEachAsync(_pipelineBuilder.Steps, parallelOptions, async (step, token) => await step.ExecuteAsync(context, token));
 
-        await NextStep.ExecuteAsync(context, cancellationToken);
+        if (NextStep is not null)
+            await NextStep.ExecuteAsync(context, cancellationToken);
     }
 }

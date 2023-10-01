@@ -21,11 +21,10 @@ public class SamplePipeline
     public IPipeline<SamplePipelineResult> SetupPipeline()
     {
         var context = new SamplePipelineContext();
-        
 
         var builder = new PipelineBuilder<SamplePipelineContext, SamplePipelineResult>(_pipelineStepFactory, context)
             .Parallel(b => b
-                .Add<SampleParallelStep1>()
+                .AddIf<SampleParallelStep1>(_ => false)
                 .Add<SampleParallelStep2>()
                 .Add<SampleParallelStep3>()
                 .Add<SampleParallelStep4>()
@@ -33,8 +32,7 @@ public class SamplePipeline
                 .Add<SampleParallelStep5>()
                     .OnError(PipelineStepErrorHandling.Retry)
                     .CompensateWith<SampleParallelStep5Compensation>()
-                .Add<SampleParallelStep6>()
-                .Add<SampleParallelStep7>())
+                .AddIfElse<SampleParallelStep6, SampleParallelStep7>(_ => false))
             .Add<SampleStep1>()
                 .CompensateWith<SampleStep1Compensation>()
             .AddIf<SampleStep2>(Step2ExecutionAllowed)

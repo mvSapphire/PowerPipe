@@ -46,11 +46,13 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     {
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             await ExecuteInternalAsync(context, cancellationToken);
         }
         catch (Exception e)
         {
-            if (e is PipelineExecutionException)
+            if (e is PipelineExecutionException or OperationCanceledException)
             {
                 ErrorHandledSucceed = false;
                 throw;
