@@ -12,6 +12,7 @@
         <PackageTags>pipeline, powerpipe, pipe, builder, chain, chain-of-responsibility</PackageTags>
         <PackageIcon>logo.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
