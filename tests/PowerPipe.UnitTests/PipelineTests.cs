@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using PowerPipe.Builder;
 using PowerPipe.Builder.Steps;
-using PowerPipe.Extensions.MicrosoftDependencyInjection;
 using PowerPipe.Exceptions;
 using PowerPipe.Factories;
 using PowerPipe.UnitTests.Steps;
