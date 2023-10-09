@@ -5,8 +5,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
 
+/// <summary>
+/// Provides extension methods for configuring PowerPipe in Microsoft Dependency Injection (DI) services.
+/// </summary>
 public static class ServiceCollectionExtension
 {
+    /// <summary>
+    /// Adds PowerPipe services to the DI container with the specified lifetime.
+    /// </summary>
+    /// <param name="serviceCollection">The DI service collection to which services are added.</param>
+    /// <param name="lifetime">The lifetime of the added services (Transient, Scoped, or Singleton).</param>
+    /// <returns>The modified DI service collection.</returns>
     public static IServiceCollection AddPowerPipe(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
     {
@@ -19,6 +28,14 @@ public static class ServiceCollectionExtension
         };
     }
 
+    /// <summary>
+    /// Adds a PowerPipe step to the DI container with the specified lifetime.
+    /// </summary>
+    /// <typeparam name="TStep">The type of the step to add.</typeparam>
+    /// <typeparam name="TContext">The type of context used in the pipeline.</typeparam>
+    /// <param name="serviceCollection">The DI service collection to which the step is added.</param>
+    /// <param name="lifetime">The lifetime of the added step (Transient, Scoped, or Singleton).</param>
+    /// <returns>The modified DI service collection.</returns>
     public static IServiceCollection AddPowerPipeStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TStep : class, IStepBase<TContext>
@@ -33,6 +50,14 @@ public static class ServiceCollectionExtension
         };
     }
 
+    /// <summary>
+    /// Adds a PowerPipe compensation step to the DI container with the specified lifetime.
+    /// </summary>
+    /// <typeparam name="TStep">The type of the compensation step to add.</typeparam>
+    /// <typeparam name="TContext">The type of context used in the pipeline.</typeparam>
+    /// <param name="serviceCollection">The DI service collection to which the compensation step is added.</param>
+    /// <param name="lifetime">The lifetime of the added compensation step (Transient, Scoped, or Singleton).</param>
+    /// <returns>The modified DI service collection.</returns>
     public static IServiceCollection AddPowerPipeCompensationStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TStep : class, IPipelineCompensationStep<TContext>

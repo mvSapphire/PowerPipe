@@ -12,6 +12,7 @@
         <PackageTags>pipeline, powerpipe, pipe, di, dependency injection</PackageTags>
         <PackageIcon>logo.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
