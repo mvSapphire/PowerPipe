@@ -1,9 +1,8 @@
 ﻿using System;
 using PowerPipe.Factories;
 using PowerPipe.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// Provides extension methods for configuring PowerPipe in Microsoft Dependency Injection (DI) services.
