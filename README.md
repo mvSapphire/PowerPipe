@@ -193,23 +193,39 @@ var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
 ```
 
 4. **Extensions: Microsoft Dependency Injection**
+
 The `PowerPipe.Extensions.MicrosoftDependencyInjection` extension provides integration with Microsoft Dependency Injection.
+It's heavily inspired by `MediatR` service registrar.  
 
-- Use `AddPowerPipe` to register step factory
-
-```csharp
-public static IServiceCollection AddPowerPipe(this IServiceCollection serviceCollection)
-```
-
-- Use `AddPowerPipeStep`, `AddPowerPipeParallelStep`, `AddPowerPipeCompensationStep` methods to register your steps
+- Use `AddPowerPipe` to register all required services and scan libraries for your step implementations.
 
 ```csharp
-services  
-    .AddPowerPipeStep<SampleStep1, SampleContext>()
-    .AddPowerPipeParallelStep<SampleParallelStep1, SampleContext>()
-    .AddPowerPipeCompensationStep<SampleStep1Compensation, SampleContext>()
-    // other steps ...  
-    ;
+public static IServiceCollection AddPowerPipe(
+    this IServiceCollection serviceCollection,
+    PowerPipeConfiguration configuration)
 ```
+
+By default all found implementations will be registered as Transient.
+
+```csharp
+services.AddPowerPipe(c =>
+{
+    c.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+});
+```
+
+But you can configure service lifetime per step implementation.
+
+```csharp
+services.AddPowerPipe(c =>
+{
+    c.RegisterServicesFromAssemblies(typeof(Program).Assembly)
+        .AddBehavior<Step1>(ServiceLifetime.Singleton)
+        .AddBehavior<Step2>(ServiceLifetime.Scoped)
+        // default Transient
+        .AddBehavior<TestStep3>();
+});
+```
+
 
 Check out [sample project](samples/PowerPipe.Sample) 👀

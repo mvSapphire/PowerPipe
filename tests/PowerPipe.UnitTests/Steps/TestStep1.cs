@@ -6,7 +6,14 @@ namespace PowerPipe.UnitTests.Steps;
 
 public class TestStep1 : IPipelineStep<TestPipelineContext>
 {
+    public static int CreationCount { get; private set; }
+
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
+
+    public TestStep1()
+    {
+        CreationCount++;
+    }
 
     public virtual async Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
     {

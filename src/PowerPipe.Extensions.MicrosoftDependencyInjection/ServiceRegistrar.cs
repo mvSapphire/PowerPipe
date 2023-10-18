@@ -14,22 +14,62 @@ public static class ServiceRegistrar
     public static void AddPowerPipeClasses(IServiceCollection services, PowerPipeConfiguration configuration)
     {
         var assembliesToScan = configuration.AssembliesToRegister.Distinct().ToArray();
-        ConnectImplementationsToTypesClosing(typeof(IPipelineCompensationStep<>), services, assembliesToScan, false, configuration);
-        ConnectImplementationsToTypesClosing(typeof(IPipelineStep<>), services, assembliesToScan, false, configuration);
+        ConnectImplementationsToTypes(typeof(IPipelineParallelStep<>), services, assembliesToScan, configuration);
+        ConnectImplementationsToTypes(typeof(IPipelineCompensationStep<>), services, assembliesToScan, configuration);
+        ConnectImplementationsToTypes(typeof(IPipelineStep<>), services, assembliesToScan, configuration);
+    }
+    
+    public static void AddRequiredServices(IServiceCollection services, PowerPipeConfiguration serviceConfiguration)
+    {
+        // Use TryAdd, so any existing registration doesn't get overridden
+        services.TryAdd(new ServiceDescriptor(typeof(IPipelineStepFactory),
+            typeof(PipelineStepFactory),
+            ServiceLifetime.Transient));
+        
+        foreach (var serviceDescriptor in serviceConfiguration.BehaviorsToRegister)
+        {
+            // this is for future, when we need search by interface and not an concrete implementation
+            if (serviceDescriptor.ServiceType != serviceDescriptor.ImplementationType)
+            {
+                services.TryAddEnumerable(serviceDescriptor);
+                continue;
+            }
+            
+            // as far as we search for concrete implementation and not an interface, we, for now, should do this
+            switch (serviceDescriptor.Lifetime)
+            {
+                case ServiceLifetime.Singleton:
+                    services.TryAddSingleton(serviceDescriptor.ImplementationType);
+                    break;
+                case ServiceLifetime.Scoped:
+                    services.TryAddScoped(serviceDescriptor.ImplementationType);
+                    break;
+                case ServiceLifetime.Transient:
+                    services.TryAddTransient(serviceDescriptor.ImplementationType);
+                    break;
+            }
+        }
     }
 
-    private static void ConnectImplementationsToTypesClosing(Type openRequestInterface,
+    #region Private Methods
+
+    private static void ConnectImplementationsToTypes(
+        Type openRequestInterface,
         IServiceCollection services,
         IEnumerable<Assembly> assembliesToScan,
-        bool addIfAlreadyExists,
         PowerPipeConfiguration configuration)
     {
         var concretions = new List<Type>();
         var interfaces = new List<Type>();
-        foreach (var type in assembliesToScan.SelectMany(a => a.DefinedTypes).Where(t => !t.IsOpenGeneric()).Where(configuration.TypeEvaluator))
+        foreach (var type in 
+                 assembliesToScan.SelectMany(a => a.DefinedTypes)
+                     .Where(t => !t.IsOpenGeneric()).Where(configuration.TypeEvaluator))
         {
-            var interfaceTypes = type.FindInterfacesThatClose(openRequestInterface).ToArray();
-            if (!interfaceTypes.Any()) continue;
+            var interfaceTypes = type.FindInterfaces(openRequestInterface).Distinct().ToArray();
+            if (!interfaceTypes.Any())
+            {
+                continue;
+            }
 
             if (type.IsConcrete())
             {
@@ -42,32 +82,23 @@ public static class ServiceRegistrar
             }
         }
 
-        foreach (var @interface in interfaces)
+        foreach (var inf in interfaces)
         {
-            var exactMatches = concretions.Where(x => x.CanBeCastTo(@interface)).ToList();
-            if (addIfAlreadyExists)
+            var exactMatches = concretions.Where(x => x.CanBeCastTo(inf)).ToList();
+        
+            if (exactMatches.Count > 1)
             {
-                foreach (var type in exactMatches)
-                {
-                    services.AddTransient(type);
-                }
-            }
-            else
-            {
-                if (exactMatches.Count > 1)
-                {
-                    exactMatches.RemoveAll(m => !IsMatchingWithInterface(m, @interface));
-                }
-
-                foreach (var type in exactMatches)
-                {
-                    services.TryAddTransient(type);
-                }
+                exactMatches.RemoveAll(m => !IsMatchingWithInterface(m, inf));
             }
 
-            if (!@interface.IsOpenGeneric())
+            foreach (var type in exactMatches.Where(type => !configuration.BehaviorsToRegister.Any(c => c.ImplementationType == type)))
             {
-                AddConcretionsThatCouldBeClosed(@interface, concretions, services);
+                services.TryAddTransient(type);
+            }
+
+            if (!inf.IsOpenGeneric())
+            {
+                AddConcretionsThatCouldBeClosed(inf, concretions, services);
             }
         }
     }
@@ -94,14 +125,17 @@ public static class ServiceRegistrar
         return false;
     }
 
-    private static void AddConcretionsThatCouldBeClosed(Type @interface, List<Type> concretions, IServiceCollection services)
+    private static void AddConcretionsThatCouldBeClosed(
+        Type inInterface,
+        IEnumerable<Type> concretions,
+        IServiceCollection services)
     {
         foreach (var type in concretions
-                     .Where(x => x.IsOpenGeneric() && x.CouldCloseTo(@interface)))
+                     .Where(x => x.IsOpenGeneric() && x.CouldCloseTo(inInterface)))
         {
             try
             {
-                services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
+                services.TryAddTransient(inInterface, type.MakeGenericType(inInterface.GenericTypeArguments));
             }
             catch (Exception)
             {
@@ -110,7 +144,7 @@ public static class ServiceRegistrar
         }
     }
 
-    internal static bool CouldCloseTo(this Type openConcretion, Type closedInterface)
+    private static bool CouldCloseTo(this Type openConcretion, Type closedInterface)
     {
         var openInterface = closedInterface.GetGenericTypeDefinition();
         var arguments = closedInterface.GenericTypeArguments;
@@ -121,11 +155,12 @@ public static class ServiceRegistrar
 
     private static bool CanBeCastTo(this Type pluggedType, Type pluginType)
     {
-        if (pluggedType == null) return false;
+        if (pluggedType == null)
+        {
+            return false;
+        }
 
-        if (pluggedType == pluginType) return true;
-
-        return pluginType.IsAssignableFrom(pluggedType);
+        return pluggedType == pluginType || pluginType.IsAssignableFrom(pluggedType);
     }
 
     private static bool IsOpenGeneric(this Type type)
@@ -133,36 +168,17 @@ public static class ServiceRegistrar
         return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
     }
 
-    internal static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)
+    private static IEnumerable<Type> FindInterfaces(this Type pluggedType, Type templateType)
     {
-        return FindInterfacesThatClosesCore(pluggedType, templateType).Distinct();
-    }
-
-    private static IEnumerable<Type> FindInterfacesThatClosesCore(Type pluggedType, Type templateType)
-    {
-        if (pluggedType == null) yield break;
-
-        if (!pluggedType.IsConcrete()) yield break;
-
-        if (templateType.IsInterface)
+        if (pluggedType == null || !pluggedType.IsConcrete() || !templateType.IsInterface)
         {
-            foreach (
-                var interfaceType in
-                pluggedType.GetInterfaces()
-                    .Where(type => type.IsGenericType && (type.GetGenericTypeDefinition() == templateType)))
-            {
-                yield return interfaceType;
-            }
-        }
-        else if (pluggedType.BaseType!.IsGenericType &&
-                 (pluggedType.BaseType!.GetGenericTypeDefinition() == templateType))
-        {
-            yield return pluggedType.BaseType!;
+            yield break;
         }
 
-        if (pluggedType.BaseType == typeof(object)) yield break;
-
-        foreach (var interfaceType in FindInterfacesThatClosesCore(pluggedType.BaseType!, templateType))
+        foreach (
+            var interfaceType in
+            pluggedType.GetInterfaces()
+                .Where(type => type.IsGenericType && (type.GetGenericTypeDefinition() == templateType)))
         {
             yield return interfaceType;
         }
@@ -173,20 +189,15 @@ public static class ServiceRegistrar
         return !type.IsAbstract && !type.IsInterface;
     }
 
-    private static void Fill<T>(this IList<T> list, T value)
+    private static void Fill<T>(this ICollection<T> list, T value)
     {
-        if (list.Contains(value)) return;
+        if (list.Contains(value))
+        {
+            return;
+        }
+        
         list.Add(value);
     }
-
-    public static void AddRequiredServices(IServiceCollection services, PowerPipeConfiguration serviceConfiguration)
-    {
-        // Use TryAdd, so any existing registration doesn't get overridden
-        services.TryAdd(new ServiceDescriptor(typeof(IPipelineStepFactory), typeof(PipelineStepFactory), serviceConfiguration.Lifetime));
-        
-        foreach (var serviceDescriptor in serviceConfiguration.BehaviorsToRegister)
-        {
-            services.TryAddEnumerable(serviceDescriptor);
-        }
-    }
+    
+    #endregion
 }

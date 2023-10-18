@@ -23,26 +23,11 @@ class Program
     {
         //setup dependency injection
         IServiceCollection services = new ServiceCollection();
-        services.AddPowerPipe();
-        services.AddPowerPipeStep<SampleStep1, SamplePipelineContext>();
-        services.AddPowerPipeCompensationStep<SampleStep1Compensation, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleStep2, SamplePipelineContext>();
-        services.AddPowerPipeCompensationStep<SampleStep2Compensation, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleStep3, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleStep4, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleStep5, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleStep6, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleStep7, SamplePipelineContext>();
-        services.AddPowerPipeCompensationStep<SampleStep7Compensation, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleStep1, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleParallelStep1, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleParallelStep2, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleParallelStep3, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleParallelStep4, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleParallelStep5, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleParallelStep6, SamplePipelineContext>();
-        services.AddPowerPipeStep<SampleParallelStep7, SamplePipelineContext>();
-        services.AddPowerPipeCompensationStep<SampleParallelStep5Compensation, SamplePipelineContext>();
+        
+        services.AddPowerPipe(c =>
+        {
+            c.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+        });
 
         services.AddSingleton<SamplePipeline>();
 

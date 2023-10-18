@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using PowerPipe.Extensions.MicrosoftDependencyInjection;
+using PowerPipe.Interfaces;
 using PowerPipe.UnitTests.Steps;
 
 namespace PowerPipe.UnitTests.Fixtures;
@@ -14,7 +15,6 @@ public sealed class AutoDIFixture : IDisposable
         var services = new ServiceCollection();
         services.AddPowerPipe(c =>
         {
-            c.Lifetime = ServiceLifetime.Transient;
             c.RegisterServicesFromAssemblies(typeof(AutoDIFixture).Assembly);
         });
 

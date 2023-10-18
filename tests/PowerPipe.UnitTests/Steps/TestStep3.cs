@@ -5,13 +5,13 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.UnitTests.Steps;
 
-public class TestStep2 : IPipelineStep<TestPipelineContext>
+public class TestStep3 : IPipelineStep<TestPipelineContext>
 {
     public static int CreationCount { get; private set; }
 
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
     
-    public TestStep2()
+    public TestStep3()
     {
         CreationCount++;
     }
