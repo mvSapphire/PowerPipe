@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// Configuration class for automatic steps registration
@@ -55,10 +54,14 @@ public class PowerPipeConfiguration
     public PowerPipeConfiguration AddBehavior<TServiceType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddBehavior(typeof(TServiceType), typeof(TServiceType), serviceLifetime);
 
-    private PowerPipeConfiguration AddBehavior(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
+    #region PrivateMethods
+
+    private PowerPipeConfiguration AddBehavior(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime)
     {
         BehaviorsToRegister.Add(new ServiceDescriptor(serviceType, implementationType, serviceLifetime));
 
         return this;
     }
+
+    #endregion
 }

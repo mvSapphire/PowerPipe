@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using PowerPipe.Extensions.MicrosoftDependencyInjection;
-using PowerPipe.Sample.Steps;
 
 namespace PowerPipe.Sample;
 
@@ -26,7 +26,7 @@ class Program
         
         services.AddPowerPipe(c =>
         {
-            c.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+            c.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
         });
 
         services.AddSingleton<SamplePipeline>();

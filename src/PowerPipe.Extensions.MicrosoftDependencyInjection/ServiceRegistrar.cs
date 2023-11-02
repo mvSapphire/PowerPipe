@@ -9,7 +9,7 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
 
-public static class ServiceRegistrar
+internal static class ServiceRegistrar
 {
     public static void AddPowerPipeClasses(IServiceCollection services, PowerPipeConfiguration configuration)
     {
@@ -91,7 +91,7 @@ public static class ServiceRegistrar
                 exactMatches.RemoveAll(m => !IsMatchingWithInterface(m, inf));
             }
 
-            foreach (var type in exactMatches.Where(type => !configuration.BehaviorsToRegister.Any(c => c.ImplementationType == type)))
+            foreach (var type in exactMatches.Where(type => configuration.BehaviorsToRegister.All(c => c.ImplementationType != type)))
             {
                 services.TryAddTransient(type);
             }

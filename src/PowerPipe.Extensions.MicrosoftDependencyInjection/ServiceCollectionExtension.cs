@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
+using PowerPipe.Extensions.MicrosoftDependencyInjection;
 using PowerPipe.Factories;
 using PowerPipe.Interfaces;
 
-namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// Provides extension methods for configuring PowerPipe in Microsoft Dependency Injection (DI) services.
@@ -17,7 +16,7 @@ public static class ServiceCollectionExtension
     /// <param name="serviceCollection">The DI service collection to which services are added.</param>
     /// <param name="lifetime">The lifetime of the added services (Transient, Scoped, or Singleton).</param>
     /// <returns>The modified DI service collection.</returns>
-    [Obsolete("Use new resgistration with PowerPipeConfiguration")]
+    [Obsolete("Use new registration with PowerPipeConfiguration")]
     public static IServiceCollection AddPowerPipe(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
     {
@@ -38,7 +37,7 @@ public static class ServiceCollectionExtension
     /// <param name="serviceCollection">The DI service collection to which the step is added.</param>
     /// <param name="lifetime">The lifetime of the added step (Transient, Scoped, or Singleton).</param>
     /// <returns>The modified DI service collection.</returns>
-    [Obsolete("Use new resgistration with PowerPipeConfiguration")]
+    [Obsolete("Use new registration with PowerPipeConfiguration")]
     public static IServiceCollection AddPowerPipeStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TStep : class, IStepBase<TContext>
@@ -61,7 +60,7 @@ public static class ServiceCollectionExtension
     /// <param name="serviceCollection">The DI service collection to which the compensation step is added.</param>
     /// <param name="lifetime">The lifetime of the added compensation step (Transient, Scoped, or Singleton).</param>
     /// <returns>The modified DI service collection.</returns>
-    [Obsolete("Use new resgistration with PowerPipeConfiguration")]
+    [Obsolete("Use new registration with PowerPipeConfiguration")]
     public static IServiceCollection AddPowerPipeCompensationStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TStep : class, IPipelineCompensationStep<TContext>
@@ -99,7 +98,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddPowerPipe(this IServiceCollection services, 
         PowerPipeConfiguration configuration)
     {
-        if (!configuration.AssembliesToRegister.Any())
+        if (configuration.AssembliesToRegister.Count == 0)
         {
             throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
         }

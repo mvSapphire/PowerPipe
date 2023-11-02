@@ -210,7 +210,7 @@ By default all found implementations will be registered as Transient.
 ```csharp
 services.AddPowerPipe(c =>
 {
-    c.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+    c.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
 });
 ```
 
