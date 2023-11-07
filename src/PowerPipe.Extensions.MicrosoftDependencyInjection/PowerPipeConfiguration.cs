@@ -17,7 +17,24 @@ public class PowerPipeConfiguration
     internal ICollection<Assembly> AssembliesToRegister { get; } = new List<Assembly>();
 
     internal ICollection<ServiceDescriptor> BehaviorsToRegister { get; } = new List<ServiceDescriptor>();
-    
+
+    internal ServiceLifetime DefaultLifetime { get; private set; } = ServiceLifetime.Transient;
+
+    /// <summary>
+    /// Changes default (Transient) service registration life time
+    /// </summary>
+    /// <param name="lifetime"></param>
+    /// <returns></returns>
+    public PowerPipeConfiguration ChangeDefaultLifetime(ServiceLifetime lifetime)
+    {
+        if (DefaultLifetime == lifetime)
+            return this;
+
+        DefaultLifetime = lifetime;
+
+        return this;
+    }
+
     /// <summary>
     /// Register assembly to search implementations of steps from
     /// </summary>

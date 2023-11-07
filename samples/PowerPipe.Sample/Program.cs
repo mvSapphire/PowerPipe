@@ -21,10 +21,12 @@ internal static class Program
         //setup dependency injection
         IServiceCollection services = new ServiceCollection();
         
-        services.AddPowerPipe(c =>
+        services.AddPowerPipe(config =>
         {
-            c.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly())
-                .AddBehavior(typeof(SampleGenericStep<>), ServiceLifetime.Scoped);
+            config
+                .RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly())
+                .ChangeDefaultLifetime(ServiceLifetime.Scoped)
+                .AddBehavior(typeof(SampleGenericStep<>), ServiceLifetime.Singleton);
         });
 
         services.AddSingleton<SamplePipeline>();

@@ -90,7 +90,18 @@ internal static class ServiceRegistrar
 
             foreach (var type in exactMatches.Where(type => configuration.BehaviorsToRegister.All(c => c.ImplementationType != type)))
             {
-                services.TryAddTransient(type);
+                switch (configuration.DefaultLifetime)
+                {
+                    case ServiceLifetime.Singleton:
+                        services.TryAddSingleton(type);
+                        break;
+                    case ServiceLifetime.Scoped:
+                        services.TryAddScoped(type);
+                        break;
+                    case ServiceLifetime.Transient:
+                        services.TryAddTransient(type);
+                        break;
+                }
             }
 
             if (!inf.IsOpenGeneric())
