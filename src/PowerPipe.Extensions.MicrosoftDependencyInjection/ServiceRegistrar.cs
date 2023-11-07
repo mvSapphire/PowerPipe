@@ -100,7 +100,7 @@ internal static class ServiceRegistrar
         }
     }
 
-    private static bool IsMatchingWithInterface(Type? handlerType, Type handlerInterface)
+    private static bool IsMatchingWithInterface(Type handlerType, Type handlerInterface)
     {
         if (handlerType == null || handlerInterface == null)
         {
