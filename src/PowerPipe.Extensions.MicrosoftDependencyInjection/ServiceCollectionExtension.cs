@@ -15,6 +15,7 @@ public static class ServiceCollectionExtension
     /// <param name="serviceCollection">The DI service collection to which services are added.</param>
     /// <param name="lifetime">The lifetime of the added services (Transient, Scoped, or Singleton).</param>
     /// <returns>The modified DI service collection.</returns>
+    [Obsolete("Use new registration with PowerPipeConfiguration")]
     public static IServiceCollection AddPowerPipe(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
     {
@@ -35,6 +36,7 @@ public static class ServiceCollectionExtension
     /// <param name="serviceCollection">The DI service collection to which the step is added.</param>
     /// <param name="lifetime">The lifetime of the added step (Transient, Scoped, or Singleton).</param>
     /// <returns>The modified DI service collection.</returns>
+    [Obsolete("Use new registration with PowerPipeConfiguration")]
     public static IServiceCollection AddPowerPipeStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TStep : class, IStepBase<TContext>
@@ -57,6 +59,7 @@ public static class ServiceCollectionExtension
     /// <param name="serviceCollection">The DI service collection to which the compensation step is added.</param>
     /// <param name="lifetime">The lifetime of the added compensation step (Transient, Scoped, or Singleton).</param>
     /// <returns>The modified DI service collection.</returns>
+    [Obsolete("Use new registration with PowerPipeConfiguration")]
     public static IServiceCollection AddPowerPipeCompensationStep<TStep, TContext>(
         this IServiceCollection serviceCollection, ServiceLifetime lifetime = ServiceLifetime.Transient)
         where TStep : class, IPipelineCompensationStep<TContext>
@@ -69,5 +72,38 @@ public static class ServiceCollectionExtension
             ServiceLifetime.Singleton => serviceCollection.AddSingleton<TStep>(),
             _ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null)
         };
+    }
+    
+    /// <summary>
+    /// Registers Pipeline builder and Step types from the specified assemblies
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    /// <param name="configuration">The action used to configure the options</param>
+    /// <returns>Service collection</returns>
+    public static IServiceCollection AddPowerPipe(this IServiceCollection services, 
+        Action<PowerPipeConfiguration> configuration)
+    {
+        var serviceConfig = new PowerPipeConfiguration();
+        configuration.Invoke(serviceConfig);
+        return services.AddPowerPipe(serviceConfig);
+    }
+    
+    /// <summary>
+    /// Registers Pipeline builder and Step types from the specified assemblies
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    /// <param name="configuration">Configuration options</param>
+    /// <returns>Service collection</returns>
+    public static IServiceCollection AddPowerPipe(this IServiceCollection services, 
+        PowerPipeConfiguration configuration)
+    {
+        if (configuration.AssembliesToRegister.Count == 0)
+        {
+            throw new ArgumentException("No assemblies found to scan. Supply at least one assembly to scan for handlers.");
+        }
+
+        ServiceRegistrar.AddPowerPipeClasses(services, configuration);
+        ServiceRegistrar.AddRequiredServices(services, configuration);
+        return services;
     }
 }

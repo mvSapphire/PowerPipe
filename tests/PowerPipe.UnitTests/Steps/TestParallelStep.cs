@@ -12,4 +12,6 @@ public class TestParallelStep : IPipelineParallelStep<TestPipelineContext>
 
         return Task.CompletedTask;
     }
+
+    public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 }

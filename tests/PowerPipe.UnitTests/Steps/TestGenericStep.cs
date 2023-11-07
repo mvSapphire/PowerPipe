@@ -4,20 +4,20 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.UnitTests.Steps;
 
-public class TestStep1 : IPipelineStep<TestPipelineContext>
+public class TestGenericStep<T>: IPipelineStep<TestPipelineContext> where T : class
 {
     public static int CreationCount { get; private set; }
 
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }
 
-    public TestStep1()
+    public TestGenericStep()
     {
         CreationCount++;
     }
 
     public virtual async Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
     {
-        context.Step1RunCount++;
+        context.GenericStepRunCount++;
         await NextStep.ExecuteAsync(context, cancellationToken);
     }
 }
