@@ -24,7 +24,7 @@ public class PowerPipeConfiguration
     /// Changes default (Transient) service registration life time
     /// </summary>
     /// <param name="lifetime"></param>
-    /// <returns></returns>
+    /// <returns>instance of PowerPipeConfiguration</returns>
     public PowerPipeConfiguration ChangeDefaultLifetime(ServiceLifetime lifetime)
     {
         if (DefaultLifetime == lifetime)
@@ -67,7 +67,7 @@ public class PowerPipeConfiguration
     /// </summary>
     /// <param name="serviceLifetime">ServiceLifetime.Transient by default</param>
     /// <typeparam name="TServiceType">Type of step implementation</typeparam>
-    /// <returns></returns>
+    /// <returns>instance of PowerPipeConfiguration</returns>
     public PowerPipeConfiguration AddBehavior<TServiceType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddBehavior(typeof(TServiceType), serviceLifetime);
 
@@ -76,7 +76,7 @@ public class PowerPipeConfiguration
     /// </summary>
     /// <param name="type">Type of step implementation</param>
     /// <param name="serviceLifetime">ServiceLifetime.Transient by default</param>
-    /// <returns></returns>
+    /// <returns>instance of PowerPipeConfiguration</returns>
     public PowerPipeConfiguration AddBehavior(Type type, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
         => AddBehavior(type, type, serviceLifetime);
 
