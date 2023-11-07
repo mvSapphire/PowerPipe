@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PowerPipe.Factories;
 using PowerPipe.Interfaces;
 
-namespace PowerPipe.Extensions.MicrosoftDependencyInjection;
+namespace Microsoft.Extensions.DependencyInjection;
 
 internal static class ServiceRegistrar
 {
@@ -61,9 +60,7 @@ internal static class ServiceRegistrar
     {
         var concretions = new List<Type>();
         var interfaces = new List<Type>();
-        foreach (var type in 
-                 assembliesToScan.SelectMany(a => a.DefinedTypes)
-                     .Where(t => !t.IsOpenGeneric()).Where(configuration.TypeEvaluator))
+        foreach (var type in assembliesToScan.SelectMany(a => a.DefinedTypes).Where(configuration.TypeEvaluator))
         {
             var interfaceTypes = type.FindInterfaces(openRequestInterface).Distinct().ToArray();
             if (!interfaceTypes.Any())

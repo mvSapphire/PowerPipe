@@ -1,8 +1,5 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using PowerPipe.Extensions.MicrosoftDependencyInjection;
-using PowerPipe.Interfaces;
-using PowerPipe.UnitTests.Steps;
 
 namespace PowerPipe.UnitTests.Fixtures;
 

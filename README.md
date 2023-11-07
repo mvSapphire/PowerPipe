@@ -195,7 +195,6 @@ var pipeline = new PipelineBuilder<OrderProcessingContext, Order>()
 4. **Extensions: Microsoft Dependency Injection**
 
 The `PowerPipe.Extensions.MicrosoftDependencyInjection` extension provides integration with Microsoft Dependency Injection.
-It's heavily inspired by `MediatR` service registrar.  
 
 - Use `AddPowerPipe` to register all required services and scan libraries for your step implementations.
 

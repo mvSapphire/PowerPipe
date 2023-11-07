@@ -4,9 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using PowerPipe.Builder;
 using PowerPipe.Exceptions;
-using PowerPipe.Extensions.MicrosoftDependencyInjection;
 using PowerPipe.Factories;
-using PowerPipe.Interfaces;
 using PowerPipe.UnitTests.Fixtures;
 using PowerPipe.UnitTests.Steps;
 using Xunit;
@@ -33,6 +31,7 @@ public class PipelineAutoDITests : IClassFixture<AutoDIFixture>
             .Parallel(b => b
                 .Add<TestParallelStep>())
             .Add<TestStep1>()
+            .Add<TestGenericStep<TestStep1>>()
             .Add<TestStep2>()
                 .CompensateWith<TestCompensationStep>()
             .Build();
@@ -42,6 +41,7 @@ public class PipelineAutoDITests : IClassFixture<AutoDIFixture>
         await action.Should().ThrowAsync<PipelineExecutionException>();
 
         context.Step1RunCount.Should().Be(1);
+        context.GenericStepRunCount.Should().Be(1);
         context.ParallelStepRunCount.Should().Be(1);
         context.CompensationStepRunCount.Should().Be(1);
     }

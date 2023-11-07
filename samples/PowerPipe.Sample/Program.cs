@@ -2,20 +2,16 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using PowerPipe.Extensions.MicrosoftDependencyInjection;
 
 namespace PowerPipe.Sample;
 
-class Program
+internal static class Program
 {
     public static async Task Main(string[] args)
     {
         var serviceProvider = ConfigureServices();
-
         var samplePipeline = serviceProvider.GetService<SamplePipeline>();
-
         var pipeline = samplePipeline.SetupPipeline();
-
         await pipeline.RunAsync();
     }
 
@@ -30,7 +26,6 @@ class Program
         });
 
         services.AddSingleton<SamplePipeline>();
-
         var serviceProvider = services.BuildServiceProvider();
 
         return serviceProvider;

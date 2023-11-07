@@ -8,7 +8,6 @@ using NSubstitute;
 using PowerPipe.Builder;
 using PowerPipe.Builder.Steps;
 using PowerPipe.Exceptions;
-using PowerPipe.Extensions.MicrosoftDependencyInjection;
 using PowerPipe.Factories;
 using PowerPipe.UnitTests.Steps;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using PowerPipe.Extensions.MicrosoftDependencyInjection;
 using PowerPipe.Factories;
 using PowerPipe.Interfaces;
 

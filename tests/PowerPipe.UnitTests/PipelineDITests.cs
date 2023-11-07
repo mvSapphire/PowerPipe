@@ -31,6 +31,7 @@ public class PipelineDITests : IClassFixture<DIFixture>
             .Parallel(b => b
                 .Add<TestParallelStep>())
             .Add<TestStep1>()
+            .Add<TestGenericStep<TestStep1>>()
             .Add<TestStep2>()
                 .CompensateWith<TestCompensationStep>()
             .Build();
@@ -40,6 +41,7 @@ public class PipelineDITests : IClassFixture<DIFixture>
         await action.Should().ThrowAsync<PipelineExecutionException>();
 
         context.Step1RunCount.Should().Be(1);
+        context.GenericStepRunCount.Should().Be(1);
         context.ParallelStepRunCount.Should().Be(1);
         context.CompensationStepRunCount.Should().Be(1);
     }
