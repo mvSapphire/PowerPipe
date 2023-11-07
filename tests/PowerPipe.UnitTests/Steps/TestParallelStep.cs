@@ -4,7 +4,7 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.UnitTests.Steps;
 
-public class TestParallelStep : IPipelineStep<TestPipelineContext>, IPipelineParallelStep<TestPipelineContext>
+public class TestParallelStep : IPipelineParallelStep<TestPipelineContext>
 {
     public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
     {

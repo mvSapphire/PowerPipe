@@ -20,11 +20,6 @@ internal static class ServiceRegistrar
     
     public static void AddRequiredServices(IServiceCollection services, PowerPipeConfiguration serviceConfiguration)
     {
-        // Use TryAdd, so any existing registration doesn't get overridden
-        services.TryAdd(new ServiceDescriptor(typeof(IPipelineStepFactory),
-            typeof(PipelineStepFactory),
-            ServiceLifetime.Transient));
-        
         foreach (var serviceDescriptor in serviceConfiguration.BehaviorsToRegister)
         {
             // this is for future, when we need search by interface and not an concrete implementation
@@ -48,6 +43,11 @@ internal static class ServiceRegistrar
                     break;
             }
         }
+        
+        // Use TryAdd, so any existing registration doesn't get overridden
+        services.TryAdd(new ServiceDescriptor(typeof(IPipelineStepFactory),
+            typeof(PipelineStepFactory),
+            ServiceLifetime.Transient));
     }
 
     #region Private Methods
