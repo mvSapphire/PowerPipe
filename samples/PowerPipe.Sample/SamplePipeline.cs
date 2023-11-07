@@ -46,7 +46,8 @@ public class SamplePipeline
                     .OnError(PipelineStepErrorHandling.Retry))
             .Add<SampleStep7>()
                 .OnError(PipelineStepErrorHandling.Retry)
-                .CompensateWith<SampleStep7Compensation>();
+                .CompensateWith<SampleStep7Compensation>()
+            .Add<SampleGenericStep<int>>();
 
         return builder.Build();
     }

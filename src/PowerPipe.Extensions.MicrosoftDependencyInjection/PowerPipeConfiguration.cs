@@ -52,7 +52,16 @@ public class PowerPipeConfiguration
     /// <typeparam name="TServiceType">Type of step implementation</typeparam>
     /// <returns></returns>
     public PowerPipeConfiguration AddBehavior<TServiceType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-        => AddBehavior(typeof(TServiceType), typeof(TServiceType), serviceLifetime);
+        => AddBehavior(typeof(TServiceType), serviceLifetime);
+
+    /// <summary>
+    /// Register implementation with specific lifetime. By default - Transient.
+    /// </summary>
+    /// <param name="type">Type of step implementation</param>
+    /// <param name="serviceLifetime">ServiceLifetime.Transient by default</param>
+    /// <returns></returns>
+    public PowerPipeConfiguration AddBehavior(Type type, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
+        => AddBehavior(type, type, serviceLifetime);
 
     #region PrivateMethods
 

@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using PowerPipe.Sample.Steps;
 
 namespace PowerPipe.Sample;
 
@@ -22,7 +23,8 @@ internal static class Program
         
         services.AddPowerPipe(c =>
         {
-            c.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+            c.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly())
+                .AddBehavior(typeof(SampleGenericStep<>), ServiceLifetime.Scoped);
         });
 
         services.AddSingleton<SamplePipeline>();
