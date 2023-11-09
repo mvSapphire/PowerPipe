@@ -26,7 +26,7 @@ internal static class Program
             config
                 .RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly())
                 .ChangeDefaultLifetime(ServiceLifetime.Scoped)
-                .AddBehavior(typeof(SampleGenericStep<>), ServiceLifetime.Singleton);
+                .AddScoped(typeof(SampleGenericStep<>));
         });
 
         services.AddSingleton<SamplePipeline>();
