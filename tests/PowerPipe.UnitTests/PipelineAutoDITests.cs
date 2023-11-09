@@ -53,10 +53,8 @@ public class PipelineAutoDITests : IClassFixture<AutoDIFixture>
         services.AddPowerPipe(c =>
         {
             c.RegisterServicesFromAssemblies(typeof(AutoDIFixture).Assembly)
-                .AddBehavior<TestStep1>(ServiceLifetime.Singleton)
-                .AddBehavior<TestStep2>(ServiceLifetime.Scoped)
-                // default Transient
-                .AddBehavior<TestStep3>();
+                .AddSingleton<TestStep1>()
+                .AddScoped<TestStep2>();
         });
         
         var serviceProvider = services.BuildServiceProvider();

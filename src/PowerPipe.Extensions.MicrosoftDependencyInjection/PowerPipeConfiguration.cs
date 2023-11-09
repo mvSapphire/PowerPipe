@@ -28,7 +28,9 @@ public class PowerPipeConfiguration
     public PowerPipeConfiguration ChangeDefaultLifetime(ServiceLifetime lifetime)
     {
         if (DefaultLifetime == lifetime)
+        {
             return this;
+        }
 
         DefaultLifetime = lifetime;
 
@@ -63,31 +65,57 @@ public class PowerPipeConfiguration
     }
 
     /// <summary>
-    /// Register implementation with specific lifetime. By default - Transient.
+    /// Register implementation with specific lifetime
     /// </summary>
-    /// <param name="serviceLifetime">ServiceLifetime.Transient by default</param>
     /// <typeparam name="TServiceType">Type of step implementation</typeparam>
-    /// <returns>instance of PowerPipeConfiguration</returns>
-    public PowerPipeConfiguration AddBehavior<TServiceType>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-        => AddBehavior(typeof(TServiceType), serviceLifetime);
+    /// <returns>Instance of PowerPipeConfiguration</returns>
+    public PowerPipeConfiguration AddTransient<TServiceType>() =>
+        AddTransient(typeof(TServiceType));
 
     /// <summary>
-    /// Register implementation with specific lifetime. By default - Transient.
+    /// Register implementation with specific lifetime
     /// </summary>
     /// <param name="type">Type of step implementation</param>
-    /// <param name="serviceLifetime">ServiceLifetime.Transient by default</param>
-    /// <returns>instance of PowerPipeConfiguration</returns>
-    public PowerPipeConfiguration AddBehavior(Type type, ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
-        => AddBehavior(type, type, serviceLifetime);
+    /// <returns>Instance of PowerPipeConfiguration</returns>
+    public PowerPipeConfiguration AddTransient(Type type) =>
+        Add(type, ServiceLifetime.Transient);
 
-    #region PrivateMethods
+    /// <summary>
+    /// Register implementation with specific lifetime
+    /// </summary>
+    /// <typeparam name="TServiceType">Type of step implementation</typeparam>
+    /// <returns>Instance of PowerPipeConfiguration</returns>
+    public PowerPipeConfiguration AddScoped<TServiceType>() =>
+        AddScoped(typeof(TServiceType));
 
-    private PowerPipeConfiguration AddBehavior(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime)
+    /// <summary>
+    /// Register implementation with specific lifetime
+    /// </summary>
+    /// <param name="type">Type of step implementation</param>
+    /// <returns>Instance of PowerPipeConfiguration</returns>
+    public PowerPipeConfiguration AddScoped(Type type) =>
+        Add(type, ServiceLifetime.Scoped);
+
+    /// <summary>
+    /// Register implementation with specific lifetime
+    /// </summary>
+    /// <typeparam name="TServiceType">Type of step implementation</typeparam>
+    /// <returns>Instance of PowerPipeConfiguration</returns>
+    public PowerPipeConfiguration AddSingleton<TServiceType>() =>
+        AddSingleton(typeof(TServiceType));
+
+    /// <summary>
+    /// Register implementation with specific lifetime
+    /// </summary>
+    /// <param name="type">Type of step implementation</param>
+    /// <returns>Instance of PowerPipeConfiguration</returns>
+    public PowerPipeConfiguration AddSingleton(Type type) =>
+        Add(type, ServiceLifetime.Singleton);
+
+    private PowerPipeConfiguration Add(Type serviceType, ServiceLifetime serviceLifetime)
     {
-        BehaviorsToRegister.Add(new ServiceDescriptor(serviceType, implementationType, serviceLifetime));
+        BehaviorsToRegister.Add(new ServiceDescriptor(serviceType, serviceType, serviceLifetime));
 
         return this;
     }
-
-    #endregion
 }

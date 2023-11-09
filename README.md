@@ -207,22 +207,22 @@ public static IServiceCollection AddPowerPipe(
 By default all found implementations will be registered as Transient.
 
 ```csharp
-services.AddPowerPipe(c =>
+services.AddPowerPipe(cfg =>
 {
-    c.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+    cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
 });
 ```
 
 But you can configure service lifetime per step implementation.
 
 ```csharp
-services.AddPowerPipe(c =>
+services.AddPowerPipe(cfg =>
 {
-    c.RegisterServicesFromAssemblies(typeof(Program).Assembly)
-        .AddBehavior<Step1>(ServiceLifetime.Singleton)
-        .AddBehavior<Step2>(ServiceLifetime.Scoped)
-        // default Transient
-        .AddBehavior<TestStep3>();
+    cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly)
+        .ChangeDefaultLifetime(ServiceLifetime.Scoped) // to override default lifetime
+        .AddSingleton<Step1>()
+        .AddTransient<Step2>()
+        .AddTransient(typeof(Step2));
 });
 ```
 
