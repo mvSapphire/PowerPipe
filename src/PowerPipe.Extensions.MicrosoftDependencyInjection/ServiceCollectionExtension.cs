@@ -80,8 +80,8 @@ public static class ServiceCollectionExtension
     /// <param name="services">Service collection</param>
     /// <param name="configuration">The action used to configure the options</param>
     /// <returns>Service collection</returns>
-    public static IServiceCollection AddPowerPipe(this IServiceCollection services, 
-        Action<PowerPipeConfiguration> configuration)
+    public static IServiceCollection AddPowerPipe(
+        this IServiceCollection services, Action<PowerPipeConfiguration> configuration)
     {
         var serviceConfig = new PowerPipeConfiguration();
         configuration.Invoke(serviceConfig);
@@ -94,8 +94,8 @@ public static class ServiceCollectionExtension
     /// <param name="services">Service collection</param>
     /// <param name="configuration">Configuration options</param>
     /// <returns>Service collection</returns>
-    public static IServiceCollection AddPowerPipe(this IServiceCollection services, 
-        PowerPipeConfiguration configuration)
+    public static IServiceCollection AddPowerPipe(
+        this IServiceCollection services, PowerPipeConfiguration configuration)
     {
         if (configuration.AssembliesToRegister.Count == 0)
         {
