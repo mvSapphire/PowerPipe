@@ -25,7 +25,8 @@ internal static class Program
         {
             config
                 .RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly())
-                .ChangeDefaultLifetime(ServiceLifetime.Scoped)
+                .ApplyTypeEvaluation(type => type.Name.StartsWith("Sample")) // not required; in case of few pipelines in one assembly that requires different registrations
+                .ChangeStepsDefaultLifetime(ServiceLifetime.Singleton)
                 .AddScoped(typeof(SampleGenericStep<>));
         });
 

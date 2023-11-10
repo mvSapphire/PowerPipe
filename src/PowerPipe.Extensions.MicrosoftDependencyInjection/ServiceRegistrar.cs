@@ -20,7 +20,9 @@ internal static class ServiceRegistrar
     
     public static void AddRequiredServices(IServiceCollection services, PowerPipeConfiguration serviceConfiguration)
     {
-        foreach (var serviceDescriptor in serviceConfiguration.BehaviorsToRegister)
+        services.TryAdd(new ServiceDescriptor(typeof(IPipelineStepFactory), typeof(PipelineStepFactory), serviceConfiguration.FactoryDefaultLifetime));
+
+        foreach (var serviceDescriptor in serviceConfiguration.StepsToOverrideLifetime)
         {
             // this is for future, when we need search by interface and not an concrete implementation
             if (serviceDescriptor.ServiceType != serviceDescriptor.ImplementationType)
@@ -28,35 +30,13 @@ internal static class ServiceRegistrar
                 services.TryAddEnumerable(serviceDescriptor);
                 continue;
             }
-            
-            // as far as we search for concrete implementation and not an interface, we, for now, should do this
-            switch (serviceDescriptor.Lifetime)
-            {
-                case ServiceLifetime.Singleton:
-                    services.TryAddSingleton(serviceDescriptor.ImplementationType);
-                    break;
-                case ServiceLifetime.Scoped:
-                    services.TryAddScoped(serviceDescriptor.ImplementationType);
-                    break;
-                case ServiceLifetime.Transient:
-                    services.TryAddTransient(serviceDescriptor.ImplementationType);
-                    break;
-            }
+
+            services.TryAdd(serviceDescriptor);
         }
-        
-        // Use TryAdd, so any existing registration doesn't get overridden
-        services.TryAdd(new ServiceDescriptor(typeof(IPipelineStepFactory),
-            typeof(PipelineStepFactory),
-            ServiceLifetime.Transient));
     }
 
-    #region Private Methods
-
     private static void ConnectImplementationsToTypes(
-        Type openRequestInterface,
-        IServiceCollection services,
-        IEnumerable<Assembly> assembliesToScan,
-        PowerPipeConfiguration configuration)
+        Type openRequestInterface, IServiceCollection services, IEnumerable<Assembly> assembliesToScan, PowerPipeConfiguration configuration)
     {
         var concretions = new List<Type>();
         var interfaces = new List<Type>();
@@ -88,20 +68,9 @@ internal static class ServiceRegistrar
                 exactMatches.RemoveAll(m => !IsMatchingWithInterface(m, inf));
             }
 
-            foreach (var type in exactMatches.Where(type => configuration.BehaviorsToRegister.All(c => c.ImplementationType != type)))
+            foreach (var type in exactMatches.Where(type => configuration.StepsToOverrideLifetime.All(c => c.ImplementationType != type)))
             {
-                switch (configuration.DefaultLifetime)
-                {
-                    case ServiceLifetime.Singleton:
-                        services.TryAddSingleton(type);
-                        break;
-                    case ServiceLifetime.Scoped:
-                        services.TryAddScoped(type);
-                        break;
-                    case ServiceLifetime.Transient:
-                        services.TryAddTransient(type);
-                        break;
-                }
+                services.TryAdd(new ServiceDescriptor(type, type, configuration.StepsDefaultLifetime));
             }
 
             if (!inf.IsOpenGeneric())
@@ -118,34 +87,24 @@ internal static class ServiceRegistrar
             return false;
         }
 
-        if (handlerType.IsInterface)
+        if (handlerType.IsInterface && handlerType.GenericTypeArguments.SequenceEqual(handlerInterface.GenericTypeArguments))
         {
-            if (handlerType.GenericTypeArguments.SequenceEqual(handlerInterface.GenericTypeArguments))
-            {
-                return true;
-            }
-        }
-        else
-        {
-            return IsMatchingWithInterface(handlerType.GetInterface(handlerInterface.Name), handlerInterface);
+            return true;
         }
 
-        return false;
+        return IsMatchingWithInterface(handlerType.GetInterface(handlerInterface.Name), handlerInterface);
     }
 
     private static void AddConcretionsThatCouldBeClosed(
-        Type inInterface,
-        IEnumerable<Type> concretions,
-        IServiceCollection services)
+        Type inInterface, IEnumerable<Type> concretions, IServiceCollection services)
     {
-        foreach (var type in concretions
-                     .Where(x => x.IsOpenGeneric() && x.CouldCloseTo(inInterface)))
+        foreach (var type in concretions.Where(x => x.IsOpenGeneric() && x.CouldCloseTo(inInterface)))
         {
             try
             {
                 services.TryAddTransient(inInterface, type.MakeGenericType(inInterface.GenericTypeArguments));
             }
-            catch (Exception)
+            catch
             {
                 // ignored
             }
@@ -163,7 +122,7 @@ internal static class ServiceRegistrar
 
     private static bool CanBeCastTo(this Type pluggedType, Type pluginType)
     {
-        if (pluggedType == null)
+        if (pluggedType is null)
         {
             return false;
         }
@@ -178,15 +137,13 @@ internal static class ServiceRegistrar
 
     private static IEnumerable<Type> FindInterfaces(this Type pluggedType, Type templateType)
     {
-        if (pluggedType == null || !pluggedType.IsConcrete() || !templateType.IsInterface)
+        if (pluggedType is null || !pluggedType.IsConcrete() || !templateType.IsInterface)
         {
             yield break;
         }
 
-        foreach (
-            var interfaceType in
-            pluggedType.GetInterfaces()
-                .Where(type => type.IsGenericType && (type.GetGenericTypeDefinition() == templateType)))
+        foreach (var interfaceType in pluggedType.GetInterfaces()
+                     .Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == templateType))
         {
             yield return interfaceType;
         }
@@ -206,6 +163,4 @@ internal static class ServiceRegistrar
         
         list.Add(value);
     }
-    
-    #endregion
 }
