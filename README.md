@@ -219,7 +219,7 @@ But you can configure service lifetime per step implementation.
 services.AddPowerPipe(cfg =>
 {
     cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly)
-        .ChangeDefaultLifetime(ServiceLifetime.Scoped) // to override default lifetime
+        .ChangeStepsDefaultLifetime(ServiceLifetime.Scoped)
         .AddSingleton<Step1>()
         .AddTransient<Step2>()
         .AddTransient(typeof(Step2));
