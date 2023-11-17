@@ -5,10 +5,7 @@ using PowerPipe.Interfaces;
 
 namespace PowerPipe.Builder.Steps;
 
-/// <summary>
-/// Represents a compensation step used in pipeline processing to perform compensation actions.
-/// </summary>
-/// <typeparam name="TContext">The type of context used in the pipeline.</typeparam>
+/// <inheritdoc/>
 internal class CompensationStep<TContext> : IPipelineCompensationStep<TContext>
 {
     private readonly Lazy<IPipelineCompensationStep<TContext>> _step;
@@ -31,12 +28,7 @@ internal class CompensationStep<TContext> : IPipelineCompensationStep<TContext>
         });
     }
 
-    /// <summary>
-    /// Performs compensation actions asynchronously.
-    /// </summary>
-    /// <param name="context">The context on which the compensation action is performed.</param>
-    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
-    /// <returns>A task representing the asynchronous compensation operation.</returns>
+    /// <inheritdoc/>
     public async Task CompensateAsync(TContext context, CancellationToken cancellationToken)
     {
         IsCompensated = true;

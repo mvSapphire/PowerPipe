@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -194,7 +195,7 @@ public class PipelineTests
 
         var stepFactory =
             new PipelineStepFactory(new ServiceCollection()
-                .AddPowerPipeStep<TestStep1, TestPipelineContext>()
+                .AddTransient<TestStep1>()
                 .AddTransient(_ => step2)
                 .AddTransient(_ => compensationStep)
                 .BuildServiceProvider());

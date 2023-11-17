@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -5,16 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 using PowerPipe.Builder;
 using PowerPipe.Exceptions;
 using PowerPipe.Factories;
-using PowerPipe.UnitTests.Fixtures;
 using PowerPipe.UnitTests.Steps;
 using Xunit;
 
 namespace PowerPipe.UnitTests;
 
-public class PipelineAutoDITests : IClassFixture<AutoDIFixture>
+public class PipelineDependencyInjectionTests : IClassFixture<AutoDIFixture>
 {
     private readonly ServiceProvider _serviceProvider;
-    public PipelineAutoDITests(AutoDIFixture diFixture)
+    public PipelineDependencyInjectionTests(AutoDIFixture diFixture)
     {
         _serviceProvider = diFixture.ServiceCollection.BuildServiceProvider();
     }
@@ -90,5 +90,25 @@ public class PipelineAutoDITests : IClassFixture<AutoDIFixture>
         var test3_3 = scope_3.ServiceProvider.GetService<TestStep3>();
         test3_3.Should().NotBeNull();
         TestStep3.CreationCount.Should().Be(3);
+    }
+}
+
+public sealed class AutoDIFixture : IDisposable
+{
+    public readonly IServiceCollection ServiceCollection;
+
+    public AutoDIFixture()
+    {
+        var services = new ServiceCollection();
+        services.AddPowerPipe(c =>
+        {
+            c.RegisterServicesFromAssemblies(typeof(AutoDIFixture).Assembly);
+        });
+
+        ServiceCollection = services;
+    }
+
+    public void Dispose()
+    {
     }
 }

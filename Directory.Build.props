@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageIcon>logo.png</PackageIcon>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <Title>PowerPipe</Title>
+    <Authors>Maksym Vorchakov</Authors>
+    <Description>A library for .NET that uses a fluent interface to construct advanced workflows with ease</Description>
+    <PackageTags>pipeline, powerpipe, pipe, builder, chain, chain-of-responsibility, workflow, workflow-engine</PackageTags>
+    <RepositoryUrl>https://github.com/mvSapphire/PowerPipe</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)assets\logo.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+</Project>

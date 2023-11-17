@@ -12,9 +12,7 @@ namespace PowerPipe.Builder.Steps;
 /// <typeparam name="TContext">The type of context used in the pipeline.</typeparam>
 internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipelineParallelStep<TContext>
 {
-    /// <summary>
-    /// Gets or sets the next step in the pipeline.
-    /// </summary>
+    /// <inheritdoc/>
     public IPipelineStep<TContext> NextStep { get; set; }
 
     /// <summary>
@@ -74,12 +72,7 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
         ErrorHandlingPredicate = predicate;
     }
 
-    /// <summary>
-    /// Executes the pipeline step asynchronously.
-    /// </summary>
-    /// <param name="context">The context on which the step operates.</param>
-    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <inheritdoc/>
     public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
     {
         try
