@@ -60,5 +60,5 @@ public class SamplePipelineContext : PipelineContext<SamplePipelineResult>
     public int Test1 { get; set; }
 
     public override SamplePipelineResult GetPipelineResult() => null;
-};
+}
 

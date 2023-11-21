@@ -7,9 +7,9 @@ namespace PowerPipe.Sample.Steps;
 
 public class SampleParallelStep1 : IPipelineParallelStep<SamplePipelineContext>
 {
-    public Task ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
+    public ValueTask ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
     {
         Console.WriteLine($"{nameof(SampleParallelStep1)} Executed");
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }

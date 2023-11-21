@@ -6,10 +6,10 @@ namespace PowerPipe.UnitTests.Steps;
 
 public class TestCompensationStep : IPipelineCompensationStep<TestPipelineContext>
 {
-    public virtual Task CompensateAsync(TestPipelineContext context, CancellationToken cancellationToken)
+    public virtual ValueTask CompensateAsync(TestPipelineContext context, CancellationToken cancellationToken)
     {
         context.CompensationStepRunCount++;
 
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }

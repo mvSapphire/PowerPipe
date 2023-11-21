@@ -37,7 +37,7 @@ public class PipelineDependencyInjectionTests : IClassFixture<AutoDIFixture>
             .Build();
 
         // To check that the compensation step was resolved and executed TestStep2 throws an exception
-        var action = () => pipeline.RunAsync(cts.Token);
+        var action = async () => await pipeline.RunAsync(cts.Token);
         await action.Should().ThrowAsync<PipelineExecutionException>();
 
         context.Step1RunCount.Should().Be(1);

@@ -16,6 +16,6 @@ public class TestStep2 : IPipelineStep<TestPipelineContext>
         CreationCount++;
     }
 
-    public virtual Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
+    public virtual ValueTask ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken) =>
         throw new InvalidOperationException();
 }

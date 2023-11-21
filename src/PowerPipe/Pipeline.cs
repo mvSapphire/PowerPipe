@@ -28,7 +28,7 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
     }
 
     /// <inheritdoc/>
-    public async Task<TResult> RunAsync(CancellationToken cancellationToken, bool returnResult = true)
+    public async ValueTask<TResult> RunAsync(CancellationToken cancellationToken, bool returnResult = true)
     {
         await _initStep.ExecuteAsync(_context, cancellationToken);
 

@@ -29,7 +29,7 @@ internal class CompensationStep<TContext> : IPipelineCompensationStep<TContext>
     }
 
     /// <inheritdoc/>
-    public async Task CompensateAsync(TContext context, CancellationToken cancellationToken)
+    public async ValueTask CompensateAsync(TContext context, CancellationToken cancellationToken)
     {
         IsCompensated = true;
 

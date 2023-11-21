@@ -8,7 +8,7 @@ namespace PowerPipe.Sample.Steps;
 public class SampleStep7 : IPipelineStep<SamplePipelineContext>
 {
     public IPipelineStep<SamplePipelineContext> NextStep { get; set; }
-    public async Task ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
+    public async ValueTask ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
     {
         Console.WriteLine($"{nameof(SampleStep7)} Executed");
 
