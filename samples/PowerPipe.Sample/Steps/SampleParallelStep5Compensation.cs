@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using PowerPipe.Interfaces;
@@ -9,7 +8,6 @@ public class SampleParallelStep5Compensation : IPipelineCompensationStep<SampleP
 {
     public ValueTask CompensateAsync(SamplePipelineContext context, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"{nameof(SampleParallelStep5Compensation)} Executed");
         return ValueTask.CompletedTask;
     }
 }

@@ -1,10 +1,17 @@
-﻿namespace PowerPipe.Interfaces;
+﻿using System;
+
+namespace PowerPipe.Interfaces;
 
 /// <summary>
 /// Represents a factory for creating pipeline steps and compensation steps.
 /// </summary>
 public interface IPipelineStepFactory
 {
+    /// <summary>
+    /// Instance of the service provider
+    /// </summary>
+    IServiceProvider ServiceProvider { get; }
+
     /// <summary>
     /// Creates an instance of a pipeline step.
     /// </summary>

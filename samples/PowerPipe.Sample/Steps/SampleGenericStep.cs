@@ -11,7 +11,6 @@ public class SampleGenericStep<T>: IPipelineStep<SamplePipelineContext>
 
     public async ValueTask ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"{nameof(SampleGenericStep<T>)} Executed");
         await NextStep.ExecuteAsync(context, cancellationToken);
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using PowerPipe.Sample.Steps;
 
 namespace PowerPipe.Sample;
@@ -28,6 +29,13 @@ internal static class Program
                 .ApplyTypeEvaluation(type => type.Name.StartsWith("Sample")) // not required; in case of few pipelines in one assembly that requires different registrations
                 .ChangeStepsDefaultLifetime(ServiceLifetime.Singleton)
                 .AddScoped(typeof(SampleGenericStep<>));
+        });
+
+        services.AddLogging(options =>
+        {
+            options
+                .AddConsole()
+                .SetMinimumLevel(LogLevel.Debug);
         });
 
         services.AddSingleton<SamplePipeline>();

@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using PowerPipe.Exceptions;
 using PowerPipe.Interfaces;
 
@@ -19,6 +20,11 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     /// Gets or sets the compensation step associated with this step.
     /// </summary>
     public CompensationStep<TContext> CompensationStep { get; set; }
+
+    /// <summary>
+    /// Gets or init a logger.
+    /// </summary>
+    protected ILogger Logger { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether this step has been executed.
