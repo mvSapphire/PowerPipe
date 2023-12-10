@@ -6,11 +6,11 @@ namespace PowerPipe.UnitTests.Steps;
 
 public class TestParallelStep : IPipelineParallelStep<TestPipelineContext>
 {
-    public Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
+    public ValueTask ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
     {
         context.ParallelStepRunCount++;
 
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
     public IPipelineStep<TestPipelineContext> NextStep { get; set; }

@@ -9,7 +9,7 @@ public class SampleGenericStep<T>: IPipelineStep<SamplePipelineContext>
 {
     public IPipelineStep<SamplePipelineContext> NextStep { get; set; }
 
-    public async Task ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
+    public async ValueTask ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
     {
         Console.WriteLine($"{nameof(SampleGenericStep<T>)} Executed");
         await NextStep.ExecuteAsync(context, cancellationToken);

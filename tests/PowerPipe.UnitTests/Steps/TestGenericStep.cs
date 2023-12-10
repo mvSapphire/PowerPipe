@@ -15,7 +15,7 @@ public class TestGenericStep<T>: IPipelineStep<TestPipelineContext> where T : cl
         CreationCount++;
     }
 
-    public virtual async Task ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
+    public virtual async ValueTask ExecuteAsync(TestPipelineContext context, CancellationToken cancellationToken)
     {
         context.GenericStepRunCount++;
         await NextStep.ExecuteAsync(context, cancellationToken);

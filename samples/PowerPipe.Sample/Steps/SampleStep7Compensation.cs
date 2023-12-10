@@ -7,9 +7,9 @@ namespace PowerPipe.Sample.Steps;
 
 public class SampleStep7Compensation : IPipelineCompensationStep<SamplePipelineContext>
 {
-    public Task CompensateAsync(SamplePipelineContext context, CancellationToken cancellationToken)
+    public ValueTask CompensateAsync(SamplePipelineContext context, CancellationToken cancellationToken)
     {
         Console.WriteLine($"{nameof(SampleStep7Compensation)} Executed");
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 }

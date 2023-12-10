@@ -73,7 +73,7 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     }
 
     /// <inheritdoc/>
-    public async Task ExecuteAsync(TContext context, CancellationToken cancellationToken)
+    public async ValueTask ExecuteAsync(TContext context, CancellationToken cancellationToken)
     {
         try
         {
@@ -107,8 +107,8 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     /// <param name="context">The context on which the step operates.</param>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    protected virtual Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken) =>
-        Task.CompletedTask;
+    protected virtual ValueTask ExecuteInternalAsync(TContext context, CancellationToken cancellationToken) =>
+        ValueTask.CompletedTask;
 
     /// <summary>
     /// Handles an exception that occurred during the step's execution.
@@ -116,7 +116,7 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     /// <param name="context">The context on which the step operates.</param>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A task representing the asynchronous operation. Returns true if the exception is handled; otherwise, false.</returns>
-    protected virtual async Task<bool> HandleExceptionAsync(TContext context, CancellationToken cancellationToken)
+    protected virtual async ValueTask<bool> HandleExceptionAsync(TContext context, CancellationToken cancellationToken)
     {
         if (ErrorHandlingPredicate is not null && !ErrorHandlingPredicate(context))
             return false;

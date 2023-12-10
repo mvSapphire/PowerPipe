@@ -14,7 +14,7 @@ public interface IStepBase<in TContext>
     /// </summary>
     /// <param name="context">The context on which the step operates.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task ExecuteAsync(TContext context) => ExecuteAsync(context, default);
+    ValueTask ExecuteAsync(TContext context) => ExecuteAsync(context, default);
 
     /// <summary>
     /// Executes the step asynchronously with a cancellation token.
@@ -22,5 +22,5 @@ public interface IStepBase<in TContext>
     /// <param name="context">The context on which the step operates.</param>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task ExecuteAsync(TContext context, CancellationToken cancellationToken);
+    ValueTask ExecuteAsync(TContext context, CancellationToken cancellationToken);
 }

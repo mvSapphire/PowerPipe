@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -156,7 +155,7 @@ public class PipelineTests
                 .OnError(errorHandlingBehaviour, maxRetryCount: isRetryBehaviour ? retryCount : default, predicate: ShouldApplyErrorHandling)
             .Build();
 
-        var action = () => pipeline.RunAsync(cts.Token);
+        var action = async () => await pipeline.RunAsync(cts.Token);
 
         if (applyErrorHandling)
         {
@@ -207,7 +206,7 @@ public class PipelineTests
                 .CompensateWith<TestCompensationStep>()
             .Build();
 
-        var action = () => pipeline.RunAsync(cts.Token);
+        var action = async () => await pipeline.RunAsync(cts.Token);
 
         await action.Should().ThrowAsync<Exception>();
 

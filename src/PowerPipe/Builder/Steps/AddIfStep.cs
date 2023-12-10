@@ -31,7 +31,7 @@ internal class AddIfStep<TContext> : InternalStep<TContext>
     /// <param name="context">The context on which the if step operates.</param>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    protected override async Task ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
+    protected override async ValueTask ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
         if (_predicate(context))
         {
