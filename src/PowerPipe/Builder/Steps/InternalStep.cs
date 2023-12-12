@@ -95,6 +95,8 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
                 throw;
             }
 
+            Logger?.LogDebug("Exception thrown during execution. {exception}", e);
+
             ErrorHandledSucceed = await HandleExceptionAsync(context, cancellationToken);
 
             if (!ErrorHandledSucceed.Value)
@@ -103,7 +105,10 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
         finally
         {
             if (AllowedToCompensate)
+            {
+                Logger?.LogDebug("Exception handling failed, compensation executed");
                 await CompensationStep.CompensateAsync(context, cancellationToken);
+            }
         }
     }
 
@@ -124,25 +129,38 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     /// <returns>A task representing the asynchronous operation. Returns true if the exception is handled; otherwise, false.</returns>
     protected virtual async ValueTask<bool> HandleExceptionAsync(TContext context, CancellationToken cancellationToken)
     {
+        Logger?.LogDebug("Exception handling executed");
+
         if (ErrorHandlingPredicate is not null && !ErrorHandlingPredicate(context))
+        {
+            Logger?.LogDebug("Exception not handled due to error handling predicate");
             return false;
+        }
 
         switch (ErrorHandlingBehaviour)
         {
             case PipelineStepErrorHandling.Suppress:
+                Logger?.LogDebug("Exception suppressed");
                 return true;
 
             case PipelineStepErrorHandling.Retry:
                 break;
 
             case null:
+                Logger?.LogDebug("Exception not handled due to absence of handling behaviour");
                 return false;
         }
 
         if (RetryCount >= (MaxRetryCount ?? 1))
+        {
+            Logger?.LogDebug("Exception retry count exceeded");
             return false;
+        }
 
         RetryCount++;
+
+        Logger?.LogDebug("Step execution retry after delay, {count}", RetryCount);
+
         await Task.Delay(RetryInterval ?? TimeSpan.FromSeconds(1), cancellationToken);
 
         await ExecuteAsync(context, cancellationToken);
