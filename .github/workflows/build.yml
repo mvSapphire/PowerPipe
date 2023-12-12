@@ -20,17 +20,15 @@ jobs:
           8.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover /p:Threshold=80 --no-build --verbosity normal
+    - name: Build&Test
+      run: dotnet test -f net8.0 -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-restore --verbosity normal
     - name: Create Test Coverage Badge
       uses: simon-k/dotnet-code-coverage-badge@v1.0.0
       id: create_coverage_badge
       with:
         label: coverage
         color: brightgreen
-        path: tests/PowerPipe.UnitTests/TestResults/coverage.opencover.xml
+        path: tests/PowerPipe.UnitTests/TestResults/coverage.net8.0.opencover.xml
         gist-filename: code-coverage.json
         gist-id: 87b833b49852f7f088e1d4d913600a91
         gist-auth-token: ${{ secrets.GIST_AUTH_TOKEN }}
