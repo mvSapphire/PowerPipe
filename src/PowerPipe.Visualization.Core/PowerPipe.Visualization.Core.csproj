@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+    <PackageReference Include="d2lang-cs" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Antlr\PipelineLexer.g4" />
+    <Content Include="Antlr\PipelineParser.g4" />
+  </ItemGroup>
+
+</Project>

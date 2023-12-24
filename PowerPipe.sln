@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{5A41
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPipe.Sample", "samples\PowerPipe.Sample\PowerPipe.Sample.csproj", "{931462F7-C5FE-4A73-9F2C-75D79AD6F9F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPipe.Visualization.Core", "src\PowerPipe.Visualization.Core\PowerPipe.Visualization.Core.csproj", "{2AB1CB82-0B84-494B-A391-4D1EB73B52D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPipe.Visualization.Core.Tests", "tests\PowerPipe.Visualization.Core.Tests\PowerPipe.Visualization.Core.Tests.csproj", "{3B916DBD-B3D5-4377-A93E-E33793B9C959}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,14 @@ Global
 		{931462F7-C5FE-4A73-9F2C-75D79AD6F9F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{931462F7-C5FE-4A73-9F2C-75D79AD6F9F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{931462F7-C5FE-4A73-9F2C-75D79AD6F9F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AB1CB82-0B84-494B-A391-4D1EB73B52D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AB1CB82-0B84-494B-A391-4D1EB73B52D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AB1CB82-0B84-494B-A391-4D1EB73B52D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AB1CB82-0B84-494B-A391-4D1EB73B52D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B916DBD-B3D5-4377-A93E-E33793B9C959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B916DBD-B3D5-4377-A93E-E33793B9C959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B916DBD-B3D5-4377-A93E-E33793B9C959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B916DBD-B3D5-4377-A93E-E33793B9C959}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{931462F7-C5FE-4A73-9F2C-75D79AD6F9F0} = {5A41270C-1028-4CDE-B6B9-F867B1FBB613}

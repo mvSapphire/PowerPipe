@@ -1,0 +1,8 @@
+{
+    "antlr4.generation": {
+        "mode": "external",
+        "language": "CSharp",
+        "listeners": false,
+        "visitors": true
+    }
+}
