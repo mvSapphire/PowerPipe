@@ -9,6 +9,8 @@ public class SamplePipeline
 {
     private readonly IPipelineStepFactory _pipelineStepFactory;
 
+    private bool SampleParallelStep1ExecutionAllowed(SamplePipelineContext context) => false;
+    private bool SampleParallelStep6ExecutionAllowed(SamplePipelineContext context) => false;
     private bool Step2ExecutionAllowed(SamplePipelineContext context) => true;
     private bool Step3ExecutionAllowed(SamplePipelineContext context) => false;
     private bool NestedPipelineExecutionAllowed(SamplePipelineContext context) => true;
@@ -24,7 +26,7 @@ public class SamplePipeline
 
         var builder = new PipelineBuilder<SamplePipelineContext, SamplePipelineResult>(_pipelineStepFactory, context)
             .Parallel(b => b
-                .AddIf<SampleParallelStep1>(_ => false)
+                .AddIf<SampleParallelStep1>(SampleParallelStep1ExecutionAllowed)
                 .Add<SampleParallelStep2>()
                 .Add<SampleParallelStep3>()
                 .Add<SampleParallelStep4>()
@@ -32,7 +34,7 @@ public class SamplePipeline
                 .Add<SampleParallelStep5>()
                     .OnError(PipelineStepErrorHandling.Retry)
                     .CompensateWith<SampleParallelStep5Compensation>()
-                .AddIfElse<SampleParallelStep6, SampleParallelStep7>(_ => false))
+                .AddIfElse<SampleParallelStep6, SampleParallelStep7>(SampleParallelStep6ExecutionAllowed))
             .Add<SampleStep1>()
                 .CompensateWith<SampleStep1Compensation>()
             .AddIf<SampleStep2>(Step2ExecutionAllowed)

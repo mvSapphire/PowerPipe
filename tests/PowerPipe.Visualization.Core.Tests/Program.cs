@@ -1,39 +1,49 @@
-﻿using Antlr4.Runtime;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using PowerPipe.Sample;
 using PowerPipe.Visualization.Core;
-using PowerPipe.Visualization.Core.Antlr;
-using PowerPipe.Visualization.Core.Models;
+using PowerPipe.Visualization.Core.Configurations;
 
-var input = @"
-new PipelineBuilder<SamplePipelineContext, SamplePipelineResult>(_pipelineStepFactory, context)
-.Parallel((PipelineBuilder<SamplePipelineContext, SamplePipelineResult> b) => b
-      .AddIf<SampleParallelStep1>(predicate1)
-      .Add<SampleParallelStep2>()
-      .AddIfElse<SampleParallelStep6, SampleParallelStep7>(predicate2))
-.Add<SampleStep1>().CompensateWith<SampleStep1Compensation>()
-.AddIf<SampleStep2>(Step2ExecutionAllowed)
-.CompensateWith<SampleStep2Compensation>()
-.AddIfElse<SampleStep3, SampleStep4>(Step3ExecutionAllowed)
-.OnError(PipelineStepErrorHandling.Retry)
-.If(NestedPipelineExecutionAllowed, (PipelineBuilder<SamplePipelineContext, SamplePipelineResult> b) => b
-    .Add<SampleStep6>()
-    .Add<SampleStep7>()
-    .AddIf<SampleStep23>(Step23ExecutionAllowed)
-    .AddIfElse<SampleStep333, SampleStep444>(Step3333ExecutionAllowed)
-.OnError(PipelineStepErrorHandling.Retry)
-.CompensateWith<SampleStep7Compensation>();
-";
-var inputStream = new AntlrInputStream(input);
-var pipelineLexer = new PipelineLexer(inputStream);
-var commonTokenStream = new CommonTokenStream(pipelineLexer);
-var pipelineParser = new PipelineParser(commonTokenStream);
+var configuration = Options.Create(new PowerPipeVisualizationConfiguration()
+    .ScanFromAssembly(typeof(SamplePipeline).Assembly));
 
-var startContext = pipelineParser.start();
+var provider = new MermaidDiagramProvider();
 
-var visitor = new PipelineParserVisitor();
-var res = (ICollection<Node>)visitor.Visit(startContext);
+var service = new DiagramsService(configuration, provider, new NullLoggerFactory());
 
-var con = new MermaidConvertor();
+var qq = service.GetDiagrams();
 
-Console.WriteLine(con.ConvertToMermaid(res));
+Console.WriteLine(qq.First());
 
-Console.WriteLine();
+// var input = @"
+// new PipelineBuilder<SamplePipelineContext, SamplePipelineResult>(_pipelineStepFactory, context).Parallel((PipelineBuilder<SamplePipelineContext, SamplePipelineResult> b) => b.AddIf<SampleParallelStep1>(SampleParallelStep1ExecutionAllowed).Add<SampleParallelStep2>().Add<SampleParallelStep3>()
+// .Add<SampleParallelStep4>()
+// .OnError(PipelineStepErrorHandling.Suppress)
+// .Add<SampleParallelStep5>()
+// .OnError(PipelineStepErrorHandling.Retry)
+// .CompensateWith<SampleParallelStep5Compensation>()
+// .AddIfElse<SampleParallelStep6, SampleParallelStep7>(SampleParallelStep6ExecutionAllowed)).Add<SampleStep1>().CompensateWith<SampleStep1Compensation>()
+// .AddIf<SampleStep2>(Step2ExecutionAllowed)
+// .CompensateWith<SampleStep2Compensation>()
+// .AddIfElse<SampleStep3, SampleStep4>(Step3ExecutionAllowed)
+// .OnError(PipelineStepErrorHandling.Retry)
+// .If(NestedPipelineExecutionAllowed, (PipelineBuilder<SamplePipelineContext, SamplePipelineResult> b) => b.Add<SampleStep5>().OnError(PipelineStepErrorHandling.Suppress).Add<SampleStep6>()
+//         .OnError(PipelineStepErrorHandling.Retry))
+// .Add<SampleStep7>()
+// .OnError(PipelineStepErrorHandling.Retry)
+// .CompensateWith<SampleStep7Compensation>()
+// .Add<SampleGenericStep<int>>();
+// ";
+//
+// var inputStream = new AntlrInputStream(input);
+// var pipelineLexer = new PipelineLexer(inputStream);
+// var commonTokenStream = new CommonTokenStream(pipelineLexer);
+// var pipelineParser = new PipelineParser(commonTokenStream);
+//
+// var startContext = pipelineParser.start();
+//
+// var visitor = new PipelineParserVisitor();
+// var nodes = (IFlowChart)visitor.Visit(startContext);
+//
+// Console.WriteLine(nodes.Render());
+
