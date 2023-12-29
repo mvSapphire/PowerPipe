@@ -1,69 +1,75 @@
 using System.Collections.Generic;
-using PowerPipe.Visualization.Core.Models;
+using PowerPipe.Visualization.Core.Mermaid.Graph;
+using PowerPipe.Visualization.Core.Mermaid.Graph.Interfaces;
+using PowerPipe.Visualization.Core.Mermaid.Graph.Nodes;
 
 namespace PowerPipe.Visualization.Core.Antlr;
 
 public class PipelineParserVisitor : PipelineParserBaseVisitor<object>
 {
-    public override ICollection<Node> VisitStart(PipelineParser.StartContext context)
+    public override IGraph VisitStart(PipelineParser.StartContext context)
     {
-        var pipelineNodes = new List<Node>();
+        var pipelineNodes = new List<INode>();
 
         foreach (var child in context.children)
         {
             var node = Visit(child);
 
-            if (node is Node n)
+            if (node is INode n)
             {
                 pipelineNodes.Add(n);
             }
         }
 
-        return pipelineNodes;
+        return new Graph(pipelineNodes);
     }
 
-    public override Node VisitAddStep(PipelineParser.AddStepContext context)
+    public override INode VisitAddStep(PipelineParser.AddStepContext context)
     {
-        return new Node { Type = NodeType.Add, Name1 = context.DATA().GetText() };
+        return new AddNode(context.DATA().GetText());
     }
 
-    public override Node VisitAddIfStep(PipelineParser.AddIfStepContext context)
+    public override INode VisitAddIfStep(PipelineParser.AddIfStepContext context)
     {
-        return new Node { Type = NodeType.AddIf, Name1 = context.DATA().GetText(), PredicateName = context.PREDICATE().GetText().TrimStart('(').TrimEnd(')')};
+        return new AddIfNode(context.PREDICATE().GetText().TrimStart('(').TrimEnd(')'), context.DATA().GetText());
     }
 
-    public override Node VisitAddIfElseStep(PipelineParser.AddIfElseStepContext context)
+    public override INode VisitAddIfElseStep(PipelineParser.AddIfElseStepContext context)
     {
-        return new Node
-        {
-            Type = NodeType.AddIfElse,
-            Name1 = context.DATA()[0].GetText(),
-            Name2 = context.DATA()[1].GetText(),
-            PredicateName = context.PREDICATE().GetText().TrimStart('(').TrimEnd(')')
-        };
+        return new AddIfElseNode(context.PREDICATE().GetText().TrimStart('(').TrimEnd(')'), context.DATA()[0].GetText(), context.DATA()[1].GetText());
     }
 
-    public override Node VisitIfStep(PipelineParser.IfStepContext context)
+    public override INode VisitIfStep(PipelineParser.IfStepContext context)
     {
-        var node = new Node { Type = NodeType.If, Name1 = "If", PredicateName = context.DATA().GetText()};
+        var children = new List<INode>();
 
         foreach (var child in context.children)
         {
-            node.AddChild(Visit(child));
+            var parsedChild = Visit(child);
+
+            if (parsedChild is INode c)
+            {
+                children.Add(c);
+            }
         }
 
-        return node;
+        return new IfNode(context.DATA().GetText(), children);
     }
 
-    public override Node VisitParallelStep(PipelineParser.ParallelStepContext context)
+    public override INode VisitParallelStep(PipelineParser.ParallelStepContext context)
     {
-        var node = new Node { Type = NodeType.Parallel, Name1 = "Parallel", };
+        var children = new List<INode>();
 
         foreach (var child in context.children)
         {
-            node.AddChild(Visit(child));
+            var parsedChild = Visit(child);
+
+            if (parsedChild is INode c)
+            {
+                children.Add(c);
+            }
         }
 
-        return node;
+        return new ParallelNode("Parallel", children);
     }
 }

@@ -12,38 +12,45 @@ using Microsoft.Extensions.Options;
 using PowerPipe.Interfaces;
 using PowerPipe.Visualization.Core.Antlr;
 using PowerPipe.Visualization.Core.Configurations;
-using PowerPipe.Visualization.Core.Interfaces;
-using PowerPipe.Visualization.Core.Models;
+using PowerPipe.Visualization.Core.Mermaid.Graph.Interfaces;
 
 namespace PowerPipe.Visualization.Core;
+
+public interface IDiagramService
+{
+    ICollection<string> GetDiagrams();
+}
 
 public class DiagramsService : IDiagramService
 {
     private static readonly Regex PipelineBuilderRegex = new Regex("(new PipelineBuilder)[\\s\\S]*(;)", RegexOptions.Compiled);
 
     private readonly PowerPipeVisualizationConfiguration _configuration;
-    private readonly IDiagramProvider _diagramProvider;
 
     private readonly ILogger<DiagramsService> _logger;
 
+    private readonly List<string> _diagrams;
+
     public DiagramsService(
         IOptions<PowerPipeVisualizationConfiguration> configuration,
-        IDiagramProvider diagramProvider,
         ILoggerFactory loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        ArgumentNullException.ThrowIfNull(diagramProvider);
         ArgumentNullException.ThrowIfNull(loggerFactory);
         
         _configuration = configuration.Value;
-        _diagramProvider = diagramProvider;
 
         _logger = loggerFactory.CreateLogger<DiagramsService>();
+
+        _diagrams = new List<string>();
     }
 
     public ICollection<string> GetDiagrams()
     {
-        var diagrams = new List<string>();
+        if (_diagrams.Count > 0)
+        {
+            return _diagrams;
+        }
 
         try
         {
@@ -56,7 +63,7 @@ public class DiagramsService : IDiagramService
                         continue;
                     }
 
-                    diagrams.Add(ProcessDecompiledType(decompiledType));
+                    _diagrams.Add(ProcessDecompiledType(decompiledType));
                 }
             }
         }
@@ -65,7 +72,7 @@ public class DiagramsService : IDiagramService
             _logger.LogDebug("Exception occured during retrieving of diagrams. {Exception}", e);
         }
 
-        return diagrams;
+        return _diagrams;
     }
 
     private IEnumerable<string> GetPipelineBuilders(Assembly assembly)
@@ -101,6 +108,11 @@ public class DiagramsService : IDiagramService
             }
         }
 
+        if (result.Count == 0)
+        {
+            _logger.LogDebug("No files that contain PipelineBuilder");
+        }
+
         return result;
     }
 
@@ -114,8 +126,8 @@ public class DiagramsService : IDiagramService
         var startContext = pipelineParser.start();
 
         var visitor = new PipelineParserVisitor();
-        var nodes = (ICollection<Node>)visitor.Visit(startContext);
+        var graph = (IGraph)visitor.Visit(startContext);
 
-        return _diagramProvider.GetDiagram(nodes);
+        return graph.Render();
     }
 }
