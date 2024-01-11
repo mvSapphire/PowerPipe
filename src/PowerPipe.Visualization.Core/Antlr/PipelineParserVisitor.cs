@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using PowerPipe.Visualization.Core.Antlr.Extensions;
 using PowerPipe.Visualization.Core.Mermaid.Graph;
 using PowerPipe.Visualization.Core.Mermaid.Graph.Interfaces;
 using PowerPipe.Visualization.Core.Mermaid.Graph.Nodes;
@@ -21,22 +22,29 @@ public class PipelineParserVisitor : PipelineParserBaseVisitor<object>
             }
         }
 
+        pipelineNodes.Add(new AddNode("END OF PIPELINE"));
+
         return new Graph(pipelineNodes);
     }
 
     public override INode VisitAddStep(PipelineParser.AddStepContext context)
     {
-        return new AddNode(context.DATA().GetText());
+        return new AddNode(context.DATA().GetStepName());
     }
 
     public override INode VisitAddIfStep(PipelineParser.AddIfStepContext context)
     {
-        return new AddIfNode(context.PREDICATE().GetText().TrimStart('(').TrimEnd(')'), context.DATA().GetText());
+        return new AddIfNode(
+            context.PREDICATE().GetPredicateName(),
+            context.DATA().GetStepName());
     }
 
     public override INode VisitAddIfElseStep(PipelineParser.AddIfElseStepContext context)
     {
-        return new AddIfElseNode(context.PREDICATE().GetText().TrimStart('(').TrimEnd(')'), context.DATA()[0].GetText(), context.DATA()[1].GetText());
+        return new AddIfElseNode(
+            context.PREDICATE().GetPredicateName(),
+            context.DATA()[0].GetStepName(),
+            context.DATA()[1].GetStepName());
     }
 
     public override INode VisitIfStep(PipelineParser.IfStepContext context)
@@ -53,7 +61,7 @@ public class PipelineParserVisitor : PipelineParserBaseVisitor<object>
             }
         }
 
-        return new IfNode(context.DATA().GetText(), children);
+        return new IfNode(context.ANYTEXT().GetText(), children);
     }
 
     public override INode VisitParallelStep(PipelineParser.ParallelStepContext context)

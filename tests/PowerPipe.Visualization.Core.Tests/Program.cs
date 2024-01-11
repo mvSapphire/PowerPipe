@@ -9,51 +9,31 @@ using PowerPipe.Visualization.Core.Mermaid.Graph;
 using PowerPipe.Visualization.Core.Mermaid.Graph.Interfaces;
 using PowerPipe.Visualization.Core.Mermaid.Graph.Nodes;
 
-var configuration = Options.Create(new PowerPipeVisualizationConfiguration()
-    .ScanFromAssembly(typeof(SamplePipeline).Assembly));
+// var configuration = Options.Create(new PowerPipeVisualizationConfiguration()
+//     .ScanFromAssembly(typeof(SamplePipeline).Assembly));
+//
+// var service = new DiagramsService(configuration, new NullLoggerFactory());
+//
+// var qq = service.GetDiagrams();
+//
+// Console.WriteLine(qq.First());
 
-var service = new DiagramsService(configuration, new NullLoggerFactory());
+var input = @"
+new PipelineBuilder<ChargebackProcessingContext, ChargebackWorkflowExecuteResult>(pipelineStepFactory, context).If(IsInsert, (PipelineBuilder<ChargebackProcessingContext, ChargebackWorkflowExecuteResult> b) => b.Add<CashierDataConnectorHandlerStep>().If(CashierParametersExist, (PipelineBuilder<ChargebackProcessingContext, ChargebackWorkflowExecuteResult> b) => b.AddIf<AddPanTokenInBlacklistHandlerStep>(IsPanTokenExists).AddIf<AddWalletInBlacklistHandlerStep>(IsWalletExists).AddIf<AddPhoneInBlackListHandlerStep>(IsPhoneExists)
+                        .AddIf<AddEmailInBlackListHandlerStep>(IsEmailExists))).AddIf<BlacklistRemoveByExtendedDataHandlerStep>(IsDelete).Build();
+";
 
-var qq = service.GetDiagrams();
+var inputStream = new AntlrInputStream(input);
+var pipelineLexer = new PipelineLexer(inputStream);
+var commonTokenStream = new CommonTokenStream(pipelineLexer);
+var pipelineParser = new PipelineParser(commonTokenStream);
 
-Console.WriteLine(qq.First());
+var startContext = pipelineParser.start();
 
-// var input = @"
-// new PipelineBuilder<SamplePipelineContext, SamplePipelineResult>(_pipelineStepFactory, context).Parallel((PipelineBuilder<SamplePipelineContext, SamplePipelineResult> b) => b
-// .AddIf<SampleParallelStep1>(SampleParallelStep1ExecutionAllowed)
-// .Add<SampleParallelStep2>()
-// .Add<SampleParallelStep3>()
-// .Add<SampleParallelStep4>()
-// .OnError(PipelineStepErrorHandling.Suppress)
-// .Add<SampleParallelStep5>()
-// .OnError(PipelineStepErrorHandling.Retry)
-// .CompensateWith<SampleParallelStep5Compensation>()
-// .AddIfElse<SampleParallelStep6, SampleParallelStep7>(SampleParallelStep6ExecutionAllowed))
-//
-// .Add<SampleStep1>().CompensateWith<SampleStep1Compensation>()
-// .AddIf<SampleStep2>(Step2ExecutionAllowed)
-// .CompensateWith<SampleStep2Compensation>()
-// .AddIfElse<SampleStep3, SampleStep4>(Step3ExecutionAllowed)
-// .OnError(PipelineStepErrorHandling.Retry)
-// .If(NestedPipelineExecutionAllowed, (PipelineBuilder<SamplePipelineContext, SamplePipelineResult> b) => b.Add<SampleStep5>().OnError(PipelineStepErrorHandling.Suppress).Add<SampleStep6>()
-//         .OnError(PipelineStepErrorHandling.Retry))
-// .Add<SampleStep7>()
-// .OnError(PipelineStepErrorHandling.Retry)
-// .CompensateWith<SampleStep7Compensation>()
-// .Add<SampleGenericStep<int>>();
-// ";
-//
-// var inputStream = new AntlrInputStream(input);
-// var pipelineLexer = new PipelineLexer(inputStream);
-// var commonTokenStream = new CommonTokenStream(pipelineLexer);
-// var pipelineParser = new PipelineParser(commonTokenStream);
-//
-// var startContext = pipelineParser.start();
-//
-// var visitor = new PipelineParserVisitor();
-// var nodes = (IGraph)visitor.Visit(startContext);
-//
-// Console.WriteLine(nodes.Render());
+var visitor = new PipelineParserVisitor();
+var nodes = (IGraph)visitor.Visit(startContext);
+
+Console.WriteLine(nodes.Render());
 
 
 // var nodes = new List<INode>()

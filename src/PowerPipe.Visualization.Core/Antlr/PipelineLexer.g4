@@ -1,17 +1,22 @@
 lexer grammar PipelineLexer;
 
-NEWBUIDLER:   'new PipelineBuilder<' DATA ', ' DATA '>' '(' DATA ', ' DATA ')' -> skip;
+NEWBUIDLER:   'new PipelineBuilder<' (([a-zA-Z0-9_]+'<'[a-zA-Z0-9_]+'>'|[a-zA-Z0-9_]*)) ', ' (([a-zA-Z0-9_]+'<'[a-zA-Z0-9_]+'>'|[a-zA-Z0-9_]*)) '>' '(' (([a-zA-Z0-9_]+'<'[a-zA-Z0-9_]+'>'|[a-zA-Z0-9_]*)) ', ' (([a-zA-Z0-9_]+'<'[a-zA-Z0-9_]+'>'|[a-zA-Z0-9_]*)) ')' -> skip;
+
 LAMBDANAME:   [a-z]+ -> skip;
-LAMBDA:       '(PipelineBuilder<' DATA ', ' DATA '> ' DATA ') =>' -> skip;
+LAMBDA:       '(PipelineBuilder<' ([a-zA-Z0-9_]+'<'[a-zA-Z0-9_]+'>'|[a-zA-Z0-9_]*) ', ' ([a-zA-Z0-9_]+'<'[a-zA-Z0-9_]+'>'|[a-zA-Z0-9_]*) '> ' ([a-zA-Z0-9_]+'<'[a-zA-Z0-9_]+'>'|[a-zA-Z0-9_]*) ') =>' -> skip;
+
 
 ADD:          'Add';
 ADDIF:        'AddIf';
 ADDIFELSE:    'AddIfElse';
 PARALLEL:     'Parallel';
 IF:           'If';
-PREDICATE:    '(' IDENTIFIER ')';
-DATA:         ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')+;
-IDENTIFIER:   [a-zA-Z][a-zA-Z0-9_]*;
+PREDICATE:    '(' [a-zA-Z][a-zA-Z0-9_]* ')';
+ANYTEXT:         ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')+;
+DATA: (STEPWITHGENERIC | STEPWITHOUTGENERIC);
+
+STEPWITHGENERIC : '<' [A-Za-z_0-9]* '<' [A-Za-z_0-9]+ '>' '>';
+STEPWITHOUTGENERIC : '<' [A-Za-z_0-9]* '>';
 
 LEFTARROW:    '<' -> skip;
 RIGHTARROW:   '>' -> skip;

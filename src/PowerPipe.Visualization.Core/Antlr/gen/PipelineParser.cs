@@ -32,9 +32,9 @@ using DFA = Antlr4.Runtime.Dfa.DFA;
 public partial class PipelineParser : Parser {
 	public const int
 		NEWBUIDLER=1, LAMBDANAME=2, LAMBDA=3, ADD=4, ADDIF=5, ADDIFELSE=6, PARALLEL=7, 
-		IF=8, PREDICATE=9, DATA=10, IDENTIFIER=11, LEFTARROW=12, RIGHTARROW=13, 
-		OPENPAR=14, CLOSEPAR=15, EMPTYPAR=16, COMA=17, DOT=18, WS=19, ONERRORRETRY=20, 
-		ONERRORSUPPRESS=21, COMPENSATE=22;
+		IF=8, PREDICATE=9, ANYTEXT=10, DATA=11, STEPWITHGENERIC=12, STEPWITHOUTGENERIC=13, 
+		LEFTARROW=14, RIGHTARROW=15, OPENPAR=16, CLOSEPAR=17, EMPTYPAR=18, COMA=19, 
+		DOT=20, WS=21, ONERRORRETRY=22, ONERRORSUPPRESS=23, COMPENSATE=24;
 	public const int
 		RULE_start = 0, RULE_step = 1, RULE_addStep = 2, RULE_addIfStep = 3, RULE_addIfElseStep = 4, 
 		RULE_ifStep = 5, RULE_parallelStep = 6;
@@ -44,14 +44,14 @@ public partial class PipelineParser : Parser {
 
 	private static readonly string[] _LiteralNames = {
 		null, null, null, null, "'Add'", "'AddIf'", "'AddIfElse'", "'Parallel'", 
-		"'If'", null, null, null, "'<'", "'>'", "'('", "')'", "'()'", "','", "'.'", 
-		null, "'.OnError(PipelineStepErrorHandling.Retry)'", "'.OnError(PipelineStepErrorHandling.Suppress)'"
+		"'If'", null, null, null, null, null, "'<'", "'>'", "'('", "')'", "'()'", 
+		"','", "'.'", null, "'.OnError(PipelineStepErrorHandling.Retry)'", "'.OnError(PipelineStepErrorHandling.Suppress)'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "NEWBUIDLER", "LAMBDANAME", "LAMBDA", "ADD", "ADDIF", "ADDIFELSE", 
-		"PARALLEL", "IF", "PREDICATE", "DATA", "IDENTIFIER", "LEFTARROW", "RIGHTARROW", 
-		"OPENPAR", "CLOSEPAR", "EMPTYPAR", "COMA", "DOT", "WS", "ONERRORRETRY", 
-		"ONERRORSUPPRESS", "COMPENSATE"
+		"PARALLEL", "IF", "PREDICATE", "ANYTEXT", "DATA", "STEPWITHGENERIC", "STEPWITHOUTGENERIC", 
+		"LEFTARROW", "RIGHTARROW", "OPENPAR", "CLOSEPAR", "EMPTYPAR", "COMA", 
+		"DOT", "WS", "ONERRORRETRY", "ONERRORSUPPRESS", "COMPENSATE"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -399,7 +399,7 @@ public partial class PipelineParser : Parser {
 	public partial class IfStepContext : ParserRuleContext {
 		public ITerminalNode IF() { return GetToken(PipelineParser.IF, 0); }
 		public ITerminalNode OPENPAR() { return GetToken(PipelineParser.OPENPAR, 0); }
-		public ITerminalNode DATA() { return GetToken(PipelineParser.DATA, 0); }
+		public ITerminalNode ANYTEXT() { return GetToken(PipelineParser.ANYTEXT, 0); }
 		public ITerminalNode CLOSEPAR() { return GetToken(PipelineParser.CLOSEPAR, 0); }
 		public StepContext[] step() {
 			return GetRuleContexts<StepContext>();
@@ -437,7 +437,7 @@ public partial class PipelineParser : Parser {
 			{
 			State = 38; Match(IF);
 			State = 39; Match(OPENPAR);
-			State = 40; Match(DATA);
+			State = 40; Match(ANYTEXT);
 			State = 42;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
@@ -533,7 +533,7 @@ public partial class PipelineParser : Parser {
 	}
 
 	public static readonly string _serializedATN =
-		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x18<\x4\x2\t\x2"+
+		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x1A<\x4\x2\t\x2"+
 		"\x4\x3\t\x3\x4\x4\t\x4\x4\x5\t\x5\x4\x6\t\x6\x4\a\t\a\x4\b\t\b\x3\x2\x6"+
 		"\x2\x12\n\x2\r\x2\xE\x2\x13\x3\x3\x3\x3\x3\x3\x3\x3\x3\x3\x5\x3\x1B\n"+
 		"\x3\x3\x4\x3\x4\x3\x4\x3\x5\x3\x5\x3\x5\x3\x5\x3\x6\x3\x6\x3\x6\x3\x6"+
@@ -546,14 +546,14 @@ public partial class PipelineParser : Parser {
 		"\x1B\x5\x6\x4\x2\x16\x1B\x5\b\x5\x2\x17\x1B\x5\n\x6\x2\x18\x1B\x5\f\a"+
 		"\x2\x19\x1B\x5\xE\b\x2\x1A\x15\x3\x2\x2\x2\x1A\x16\x3\x2\x2\x2\x1A\x17"+
 		"\x3\x2\x2\x2\x1A\x18\x3\x2\x2\x2\x1A\x19\x3\x2\x2\x2\x1B\x5\x3\x2\x2\x2"+
-		"\x1C\x1D\a\x6\x2\x2\x1D\x1E\a\f\x2\x2\x1E\a\x3\x2\x2\x2\x1F \a\a\x2\x2"+
-		" !\a\f\x2\x2!\"\a\v\x2\x2\"\t\x3\x2\x2\x2#$\a\b\x2\x2$%\a\f\x2\x2%&\a"+
-		"\f\x2\x2&\'\a\v\x2\x2\'\v\x3\x2\x2\x2()\a\n\x2\x2)*\a\x10\x2\x2*,\a\f"+
+		"\x1C\x1D\a\x6\x2\x2\x1D\x1E\a\r\x2\x2\x1E\a\x3\x2\x2\x2\x1F \a\a\x2\x2"+
+		" !\a\r\x2\x2!\"\a\v\x2\x2\"\t\x3\x2\x2\x2#$\a\b\x2\x2$%\a\r\x2\x2%&\a"+
+		"\r\x2\x2&\'\a\v\x2\x2\'\v\x3\x2\x2\x2()\a\n\x2\x2)*\a\x12\x2\x2*,\a\f"+
 		"\x2\x2+-\x5\x4\x3\x2,+\x3\x2\x2\x2-.\x3\x2\x2\x2.,\x3\x2\x2\x2./\x3\x2"+
-		"\x2\x2/\x30\x3\x2\x2\x2\x30\x31\a\x11\x2\x2\x31\r\x3\x2\x2\x2\x32\x33"+
-		"\a\t\x2\x2\x33\x35\a\x10\x2\x2\x34\x36\x5\x4\x3\x2\x35\x34\x3\x2\x2\x2"+
+		"\x2\x2/\x30\x3\x2\x2\x2\x30\x31\a\x13\x2\x2\x31\r\x3\x2\x2\x2\x32\x33"+
+		"\a\t\x2\x2\x33\x35\a\x12\x2\x2\x34\x36\x5\x4\x3\x2\x35\x34\x3\x2\x2\x2"+
 		"\x36\x37\x3\x2\x2\x2\x37\x35\x3\x2\x2\x2\x37\x38\x3\x2\x2\x2\x38\x39\x3"+
-		"\x2\x2\x2\x39:\a\x11\x2\x2:\xF\x3\x2\x2\x2\x6\x13\x1A.\x37";
+		"\x2\x2\x2\x39:\a\x13\x2\x2:\xF\x3\x2\x2\x2\x6\x13\x1A.\x37";
 	public static readonly ATN _ATN =
 		new ATNDeserializer().Deserialize(_serializedATN.ToCharArray());
 }
