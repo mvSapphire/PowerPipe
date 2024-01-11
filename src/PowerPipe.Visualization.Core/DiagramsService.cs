@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime;
 using ICSharpCode.Decompiler;
@@ -9,21 +8,15 @@ using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.TypeSystem;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PowerPipe.Interfaces;
 using PowerPipe.Visualization.Core.Antlr;
 using PowerPipe.Visualization.Core.Configurations;
 using PowerPipe.Visualization.Core.Mermaid.Graph.Interfaces;
 
 namespace PowerPipe.Visualization.Core;
 
-public interface IDiagramService
-{
-    ICollection<string> GetDiagrams();
-}
-
 public class DiagramsService : IDiagramService
 {
-    private static readonly Regex PipelineBuilderRegex = new Regex("(new PipelineBuilder)[\\s\\S]*(;)", RegexOptions.Compiled);
+    private static readonly Regex PipelineBuilderRegex = new Regex(@"(new PipelineBuilder)[\s\S]*(;)", RegexOptions.Compiled);
 
     private readonly PowerPipeVisualizationConfiguration _configuration;
 
@@ -31,9 +24,7 @@ public class DiagramsService : IDiagramService
 
     private readonly List<string> _diagrams;
 
-    public DiagramsService(
-        IOptions<PowerPipeVisualizationConfiguration> configuration,
-        ILoggerFactory loggerFactory)
+    public DiagramsService(IOptions<PowerPipeVisualizationConfiguration> configuration, ILoggerFactory loggerFactory)
     {
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(loggerFactory);
@@ -48,24 +39,15 @@ public class DiagramsService : IDiagramService
     public ICollection<string> GetDiagrams()
     {
         if (_diagrams.Count > 0)
-        {
             return _diagrams;
-        }
 
         try
         {
-            foreach (var assembly in _configuration.AssembliesToScan.Where(it => it is not null))
-            {
-                foreach (var decompiledType in GetPipelineBuilders(assembly))
-                {
-                    if (string.IsNullOrEmpty(decompiledType))
-                    {
-                        continue;
-                    }
+            var typesToDecompile = GetTypesToDecompile();
 
-                    _diagrams.Add(ProcessDecompiledType(decompiledType));
-                }
-            }
+            var decompiledTypes = DecompileTypes(typesToDecompile);
+
+            _diagrams.AddRange(ProcessDecompiledTypes(decompiledTypes));
         }
         catch (Exception e)
         {
@@ -75,59 +57,46 @@ public class DiagramsService : IDiagramService
         return _diagrams;
     }
 
-    private IEnumerable<string> GetPipelineBuilders(Assembly assembly)
+    private IEnumerable<Type> GetTypesToDecompile()
     {
-        var typesToDecompile = GetTypesToDecompile(assembly);
+        var types = _configuration.TypesToScan.Where(it => it is not null).ToList();
 
-        if (typesToDecompile.Count == 0)
+        foreach (var assembly in _configuration.AssembliesToScan.Where(it => it is not null))
+            types.AddRange(assembly.GetTypes());
+
+        return types;
+    }
+
+    private IEnumerable<string> DecompileTypes(IEnumerable<Type> types) =>
+        types.Select(type =>
         {
-            return Enumerable.Empty<string>();
-        }
+            var decompiler = new CSharpDecompiler(type.Assembly.Location, new DecompilerSettings());
 
-        var decompiler = new CSharpDecompiler(assembly.Location, new DecompilerSettings());
-
-        return typesToDecompile.Select(type =>
-        {
-            var decompiled = decompiler.DecompileTypeAsString(new FullTypeName(type));
-
-            return PipelineBuilderRegex.Match(decompiled).ToString();
+            return decompiler.DecompileTypeAsString(new FullTypeName(type.FullName));
         });
-    }
 
-    private IReadOnlyCollection<string> GetTypesToDecompile(Assembly assembly)
-    {
-        var result = new List<string>();
-
-        foreach (var type in assembly.GetTypes())
-        {
-            var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-
-            if (fields.Any(it => it.FieldType == typeof(IPipelineStepFactory)))
+    private IEnumerable<string> ProcessDecompiledTypes(IEnumerable<string> decompiledTypes) =>
+        decompiledTypes
+            .Select(decompiledType =>
             {
-                result.Add(type.FullName);
-            }
-        }
+                var input = PipelineBuilderRegex.Match(decompiledType).ToString();
 
-        if (result.Count == 0)
-        {
-            _logger.LogDebug("No files that contain PipelineBuilder");
-        }
+                if (string.IsNullOrEmpty(input))
+                {
+                    return null;
+                }
 
-        return result;
-    }
+                var inputStream = new AntlrInputStream(input);
+                var pipelineLexer = new PipelineLexer(inputStream);
+                var commonTokenStream = new CommonTokenStream(pipelineLexer);
+                var pipelineParser = new PipelineParser(commonTokenStream);
 
-    private string ProcessDecompiledType(string input)
-    {
-        var inputStream = new AntlrInputStream(input);
-        var pipelineLexer = new PipelineLexer(inputStream);
-        var commonTokenStream = new CommonTokenStream(pipelineLexer);
-        var pipelineParser = new PipelineParser(commonTokenStream);
+                var startContext = pipelineParser.start();
 
-        var startContext = pipelineParser.start();
+                var visitor = new PipelineParserVisitor();
+                var graph = (IGraph)visitor.Visit(startContext);
 
-        var visitor = new PipelineParserVisitor();
-        var graph = (IGraph)visitor.Visit(startContext);
-
-        return graph.Render();
-    }
+                return graph.Render();
+            })
+            .Where(it => it is not null);
 }

@@ -31,10 +31,11 @@ using DFA = Antlr4.Runtime.Dfa.DFA;
 [System.CLSCompliant(false)]
 public partial class PipelineParser : Parser {
 	public const int
-		NEWBUIDLER=1, LAMBDANAME=2, LAMBDA=3, ADD=4, ADDIF=5, ADDIFELSE=6, PARALLEL=7, 
-		IF=8, PREDICATE=9, ANYTEXT=10, DATA=11, STEPWITHGENERIC=12, STEPWITHOUTGENERIC=13, 
-		LEFTARROW=14, RIGHTARROW=15, OPENPAR=16, CLOSEPAR=17, EMPTYPAR=18, COMA=19, 
-		DOT=20, WS=21, ONERRORRETRY=22, ONERRORSUPPRESS=23, COMPENSATE=24;
+		ONERRORRETRY=1, ONERRORSUPPRESS=2, COMPENSATE=3, LEFTARROW=4, RIGHTARROW=5, 
+		EMPTYPAR=6, COMA=7, DOT=8, WS=9, NEWBUIDLER=10, LAMBDANAME=11, LAMBDA=12, 
+		ADD=13, ADDIF=14, ADDIFELSE=15, PARALLEL=16, IF=17, PREDICATE=18, OPENPREDICATE=19, 
+		DATA=20, DATA2=21, STEPWITHGENERIC=22, STEPWITHOUTGENERIC=23, TWOSTEPSWITHGENERIC=24, 
+		TWOSTEPSWITHOUTGENERIC=25, ANYTEXT=26, OPENPAR=27, CLOSEPAR=28;
 	public const int
 		RULE_start = 0, RULE_step = 1, RULE_addStep = 2, RULE_addIfStep = 3, RULE_addIfElseStep = 4, 
 		RULE_ifStep = 5, RULE_parallelStep = 6;
@@ -43,15 +44,17 @@ public partial class PipelineParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, null, null, null, "'Add'", "'AddIf'", "'AddIfElse'", "'Parallel'", 
-		"'If'", null, null, null, null, null, "'<'", "'>'", "'('", "')'", "'()'", 
-		"','", "'.'", null, "'.OnError(PipelineStepErrorHandling.Retry)'", "'.OnError(PipelineStepErrorHandling.Suppress)'"
+		null, "'.OnError(PipelineStepErrorHandling.Retry)'", "'.OnError(PipelineStepErrorHandling.Suppress)'", 
+		null, "'<'", "'>'", "'()'", "','", "'.'", null, null, null, null, "'Add'", 
+		"'AddIf'", "'AddIfElse'", "'Parallel'", "'If'", null, null, null, null, 
+		null, null, null, null, null, "'('", "')'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "NEWBUIDLER", "LAMBDANAME", "LAMBDA", "ADD", "ADDIF", "ADDIFELSE", 
-		"PARALLEL", "IF", "PREDICATE", "ANYTEXT", "DATA", "STEPWITHGENERIC", "STEPWITHOUTGENERIC", 
-		"LEFTARROW", "RIGHTARROW", "OPENPAR", "CLOSEPAR", "EMPTYPAR", "COMA", 
-		"DOT", "WS", "ONERRORRETRY", "ONERRORSUPPRESS", "COMPENSATE"
+		null, "ONERRORRETRY", "ONERRORSUPPRESS", "COMPENSATE", "LEFTARROW", "RIGHTARROW", 
+		"EMPTYPAR", "COMA", "DOT", "WS", "NEWBUIDLER", "LAMBDANAME", "LAMBDA", 
+		"ADD", "ADDIF", "ADDIFELSE", "PARALLEL", "IF", "PREDICATE", "OPENPREDICATE", 
+		"DATA", "DATA2", "STEPWITHGENERIC", "STEPWITHOUTGENERIC", "TWOSTEPSWITHGENERIC", 
+		"TWOSTEPSWITHOUTGENERIC", "ANYTEXT", "OPENPAR", "CLOSEPAR"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -347,10 +350,7 @@ public partial class PipelineParser : Parser {
 
 	public partial class AddIfElseStepContext : ParserRuleContext {
 		public ITerminalNode ADDIFELSE() { return GetToken(PipelineParser.ADDIFELSE, 0); }
-		public ITerminalNode[] DATA() { return GetTokens(PipelineParser.DATA); }
-		public ITerminalNode DATA(int i) {
-			return GetToken(PipelineParser.DATA, i);
-		}
+		public ITerminalNode DATA2() { return GetToken(PipelineParser.DATA2, 0); }
 		public ITerminalNode PREDICATE() { return GetToken(PipelineParser.PREDICATE, 0); }
 		public AddIfElseStepContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -380,9 +380,8 @@ public partial class PipelineParser : Parser {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 33; Match(ADDIFELSE);
-			State = 34; Match(DATA);
-			State = 35; Match(DATA);
-			State = 36; Match(PREDICATE);
+			State = 34; Match(DATA2);
+			State = 35; Match(PREDICATE);
 			}
 		}
 		catch (RecognitionException re) {
@@ -398,8 +397,7 @@ public partial class PipelineParser : Parser {
 
 	public partial class IfStepContext : ParserRuleContext {
 		public ITerminalNode IF() { return GetToken(PipelineParser.IF, 0); }
-		public ITerminalNode OPENPAR() { return GetToken(PipelineParser.OPENPAR, 0); }
-		public ITerminalNode ANYTEXT() { return GetToken(PipelineParser.ANYTEXT, 0); }
+		public ITerminalNode OPENPREDICATE() { return GetToken(PipelineParser.OPENPREDICATE, 0); }
 		public ITerminalNode CLOSEPAR() { return GetToken(PipelineParser.CLOSEPAR, 0); }
 		public StepContext[] step() {
 			return GetRuleContexts<StepContext>();
@@ -435,23 +433,22 @@ public partial class PipelineParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 38; Match(IF);
-			State = 39; Match(OPENPAR);
-			State = 40; Match(ANYTEXT);
-			State = 42;
+			State = 37; Match(IF);
+			State = 38; Match(OPENPREDICATE);
+			State = 40;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
 			do {
 				{
 				{
-				State = 41; step();
+				State = 39; step();
 				}
 				}
-				State = 44;
+				State = 42;
 				_errHandler.Sync(this);
 				_la = _input.La(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << ADDIF) | (1L << ADDIFELSE) | (1L << PARALLEL) | (1L << IF))) != 0) );
-			State = 46; Match(CLOSEPAR);
+			State = 44; Match(CLOSEPAR);
 			}
 		}
 		catch (RecognitionException re) {
@@ -503,22 +500,22 @@ public partial class PipelineParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 48; Match(PARALLEL);
-			State = 49; Match(OPENPAR);
-			State = 51;
+			State = 46; Match(PARALLEL);
+			State = 47; Match(OPENPAR);
+			State = 49;
 			_errHandler.Sync(this);
 			_la = _input.La(1);
 			do {
 				{
 				{
-				State = 50; step();
+				State = 48; step();
 				}
 				}
-				State = 53;
+				State = 51;
 				_errHandler.Sync(this);
 				_la = _input.La(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ADD) | (1L << ADDIF) | (1L << ADDIFELSE) | (1L << PARALLEL) | (1L << IF))) != 0) );
-			State = 55; Match(CLOSEPAR);
+			State = 53; Match(CLOSEPAR);
 			}
 		}
 		catch (RecognitionException re) {
@@ -533,27 +530,27 @@ public partial class PipelineParser : Parser {
 	}
 
 	public static readonly string _serializedATN =
-		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x1A<\x4\x2\t\x2"+
+		"\x3\xAF6F\x8320\x479D\xB75C\x4880\x1605\x191C\xAB37\x3\x1E:\x4\x2\t\x2"+
 		"\x4\x3\t\x3\x4\x4\t\x4\x4\x5\t\x5\x4\x6\t\x6\x4\a\t\a\x4\b\t\b\x3\x2\x6"+
 		"\x2\x12\n\x2\r\x2\xE\x2\x13\x3\x3\x3\x3\x3\x3\x3\x3\x3\x3\x5\x3\x1B\n"+
 		"\x3\x3\x4\x3\x4\x3\x4\x3\x5\x3\x5\x3\x5\x3\x5\x3\x6\x3\x6\x3\x6\x3\x6"+
-		"\x3\x6\x3\a\x3\a\x3\a\x3\a\x6\a-\n\a\r\a\xE\a.\x3\a\x3\a\x3\b\x3\b\x3"+
-		"\b\x6\b\x36\n\b\r\b\xE\b\x37\x3\b\x3\b\x3\b\x2\x2\x2\t\x2\x2\x4\x2\x6"+
-		"\x2\b\x2\n\x2\f\x2\xE\x2\x2\x2;\x2\x11\x3\x2\x2\x2\x4\x1A\x3\x2\x2\x2"+
-		"\x6\x1C\x3\x2\x2\x2\b\x1F\x3\x2\x2\x2\n#\x3\x2\x2\x2\f(\x3\x2\x2\x2\xE"+
-		"\x32\x3\x2\x2\x2\x10\x12\x5\x4\x3\x2\x11\x10\x3\x2\x2\x2\x12\x13\x3\x2"+
-		"\x2\x2\x13\x11\x3\x2\x2\x2\x13\x14\x3\x2\x2\x2\x14\x3\x3\x2\x2\x2\x15"+
-		"\x1B\x5\x6\x4\x2\x16\x1B\x5\b\x5\x2\x17\x1B\x5\n\x6\x2\x18\x1B\x5\f\a"+
-		"\x2\x19\x1B\x5\xE\b\x2\x1A\x15\x3\x2\x2\x2\x1A\x16\x3\x2\x2\x2\x1A\x17"+
-		"\x3\x2\x2\x2\x1A\x18\x3\x2\x2\x2\x1A\x19\x3\x2\x2\x2\x1B\x5\x3\x2\x2\x2"+
-		"\x1C\x1D\a\x6\x2\x2\x1D\x1E\a\r\x2\x2\x1E\a\x3\x2\x2\x2\x1F \a\a\x2\x2"+
-		" !\a\r\x2\x2!\"\a\v\x2\x2\"\t\x3\x2\x2\x2#$\a\b\x2\x2$%\a\r\x2\x2%&\a"+
-		"\r\x2\x2&\'\a\v\x2\x2\'\v\x3\x2\x2\x2()\a\n\x2\x2)*\a\x12\x2\x2*,\a\f"+
-		"\x2\x2+-\x5\x4\x3\x2,+\x3\x2\x2\x2-.\x3\x2\x2\x2.,\x3\x2\x2\x2./\x3\x2"+
-		"\x2\x2/\x30\x3\x2\x2\x2\x30\x31\a\x13\x2\x2\x31\r\x3\x2\x2\x2\x32\x33"+
-		"\a\t\x2\x2\x33\x35\a\x12\x2\x2\x34\x36\x5\x4\x3\x2\x35\x34\x3\x2\x2\x2"+
-		"\x36\x37\x3\x2\x2\x2\x37\x35\x3\x2\x2\x2\x37\x38\x3\x2\x2\x2\x38\x39\x3"+
-		"\x2\x2\x2\x39:\a\x13\x2\x2:\xF\x3\x2\x2\x2\x6\x13\x1A.\x37";
+		"\x3\a\x3\a\x3\a\x6\a+\n\a\r\a\xE\a,\x3\a\x3\a\x3\b\x3\b\x3\b\x6\b\x34"+
+		"\n\b\r\b\xE\b\x35\x3\b\x3\b\x3\b\x2\x2\x2\t\x2\x2\x4\x2\x6\x2\b\x2\n\x2"+
+		"\f\x2\xE\x2\x2\x2\x39\x2\x11\x3\x2\x2\x2\x4\x1A\x3\x2\x2\x2\x6\x1C\x3"+
+		"\x2\x2\x2\b\x1F\x3\x2\x2\x2\n#\x3\x2\x2\x2\f\'\x3\x2\x2\x2\xE\x30\x3\x2"+
+		"\x2\x2\x10\x12\x5\x4\x3\x2\x11\x10\x3\x2\x2\x2\x12\x13\x3\x2\x2\x2\x13"+
+		"\x11\x3\x2\x2\x2\x13\x14\x3\x2\x2\x2\x14\x3\x3\x2\x2\x2\x15\x1B\x5\x6"+
+		"\x4\x2\x16\x1B\x5\b\x5\x2\x17\x1B\x5\n\x6\x2\x18\x1B\x5\f\a\x2\x19\x1B"+
+		"\x5\xE\b\x2\x1A\x15\x3\x2\x2\x2\x1A\x16\x3\x2\x2\x2\x1A\x17\x3\x2\x2\x2"+
+		"\x1A\x18\x3\x2\x2\x2\x1A\x19\x3\x2\x2\x2\x1B\x5\x3\x2\x2\x2\x1C\x1D\a"+
+		"\xF\x2\x2\x1D\x1E\a\x16\x2\x2\x1E\a\x3\x2\x2\x2\x1F \a\x10\x2\x2 !\a\x16"+
+		"\x2\x2!\"\a\x14\x2\x2\"\t\x3\x2\x2\x2#$\a\x11\x2\x2$%\a\x17\x2\x2%&\a"+
+		"\x14\x2\x2&\v\x3\x2\x2\x2\'(\a\x13\x2\x2(*\a\x15\x2\x2)+\x5\x4\x3\x2*"+
+		")\x3\x2\x2\x2+,\x3\x2\x2\x2,*\x3\x2\x2\x2,-\x3\x2\x2\x2-.\x3\x2\x2\x2"+
+		"./\a\x1E\x2\x2/\r\x3\x2\x2\x2\x30\x31\a\x12\x2\x2\x31\x33\a\x1D\x2\x2"+
+		"\x32\x34\x5\x4\x3\x2\x33\x32\x3\x2\x2\x2\x34\x35\x3\x2\x2\x2\x35\x33\x3"+
+		"\x2\x2\x2\x35\x36\x3\x2\x2\x2\x36\x37\x3\x2\x2\x2\x37\x38\a\x1E\x2\x2"+
+		"\x38\xF\x3\x2\x2\x2\x6\x13\x1A,\x35";
 	public static readonly ATN _ATN =
 		new ATNDeserializer().Deserialize(_serializedATN.ToCharArray());
 }

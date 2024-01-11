@@ -8,6 +8,6 @@ step: addStep | addIfStep | addIfElseStep | ifStep | parallelStep;
 
 addStep: ADD DATA;
 addIfStep: ADDIF DATA PREDICATE;
-addIfElseStep: ADDIFELSE DATA DATA PREDICATE;
-ifStep: IF OPENPAR ANYTEXT step+ CLOSEPAR;
+addIfElseStep: ADDIFELSE DATA2 PREDICATE;
+ifStep: IF OPENPREDICATE step+ CLOSEPAR;
 parallelStep: PARALLEL OPENPAR step+ CLOSEPAR;

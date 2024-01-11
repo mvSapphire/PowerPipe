@@ -41,10 +41,12 @@ public class PipelineParserVisitor : PipelineParserBaseVisitor<object>
 
     public override INode VisitAddIfElseStep(PipelineParser.AddIfElseStepContext context)
     {
+        var (step1, step2) = context.DATA2().GetTwoStepsNames();
+
         return new AddIfElseNode(
             context.PREDICATE().GetPredicateName(),
-            context.DATA()[0].GetStepName(),
-            context.DATA()[1].GetStepName());
+            step1,
+            step2);
     }
 
     public override INode VisitIfStep(PipelineParser.IfStepContext context)
@@ -61,7 +63,7 @@ public class PipelineParserVisitor : PipelineParserBaseVisitor<object>
             }
         }
 
-        return new IfNode(context.ANYTEXT().GetText(), children);
+        return new IfNode(context.OPENPREDICATE().GetOpenPredicateName(), children);
     }
 
     public override INode VisitParallelStep(PipelineParser.ParallelStepContext context)
