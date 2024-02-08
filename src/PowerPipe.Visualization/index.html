@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PowerPipe visualization</title>
+    <link href="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.esm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        @media (max-width: 767.98px) { .sidebar { top: 5rem; } }
+        .sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 48px 0 0; box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1); }
+        .sidebar .nav-link { font-weight: 500; color: #333; }
+        .sidebar .nav-link.active { color: #2470dc; }
+        .navbar-brand { padding-top: .75rem; padding-bottom: .75rem; font-size: 1rem; background-color: rgba(0, 0, 0, .25); box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25); }
+        .navbar { right: 1rem; padding: .75rem 1rem; border-width: 0; border-radius: 0; }
+        #diagram { text-align: center; }
+    </style>
+</head>
+<body>
+<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">PowerPipe</a>
+    <div class="navbar-nav">
+        <div class="text-end col-md-3 col-lg-2 me-0 px-3">
+            <a href="https://github.com/mvSapphire/PowerPipe" target="_blank" class="text-light text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16" data-darkreader-inline-fill="" style="&#45;&#45;darkreader-inline-fill: currentColor;">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</header>
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-3">
+                <p class="d-flex align-items-center mb-3 mb-md-0 me-md-auto px-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="22" fill="currentColor" class="bi bi-diagram-3-fill" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5zm-6 8A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5zm6 0A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5zm6 0a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5z" />
+                    </svg>
+                    <span class="fs-4">Workflows</span>
+                </p>
+                <hr>
+                <ul id="list" class="nav flex-column">
+                </ul>
+            </div>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Workflow visualization</h1>
+            </div>
+            <div id="diagram" class="mermaid">
+            </div>
+        </main>
+    </div>
+</div>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+        startOnLoad: true
+    });
+
+    const diagrams = %DIAGRAMS%;
+
+    const diagramKeys = Object.keys(diagrams);
+
+    const listContainer = document.getElementById('list');
+    const diagramContainer = document.getElementById('diagram');
+
+    listContainer.innerHTML = '';
+    diagramContainer.innerHTML = '';
+
+    const setAttributes = (element, key, isActive) => {
+        element.textContent = key;
+        element.setAttribute('aria-current', 'page');
+        element.setAttribute('href', '#');
+        element.addEventListener('click', clickEvent);
+
+        if (isActive) {
+            element.classList.add('nav-link', 'active');
+            diagramContainer.innerHTML = diagrams[key];
+        } else {
+            element.classList.add('nav-link');
+        }
+    };
+
+    let clickEvent = function( e ) {
+        const lis = listContainer.getElementsByTagName('li');
+
+        for (let i = 0; i < lis.length; i++) {
+            const element = lis[i].getElementsByTagName('a')[0];
+            element.classList.remove('active');
+
+            if (element.innerHTML === e.target.innerHTML) {
+                element.classList.add('active');
+            }
+        }
+
+        diagramContainer.removeAttribute('data-processed');
+        diagramContainer.innerHTML = diagrams[e.target.innerText];
+        mermaid.run({
+            nodes: [diagramContainer],
+        });
+    }
+
+    for(let i = 0; i < diagramKeys.length; i++) {
+        const key = diagramKeys[i];
+
+        const listItem = document.createElement('li');
+        listItem.classList.add('nav-item');
+
+        const linkItem = document.createElement('a');
+
+        if (i === 0) {
+            setAttributes(linkItem, key, true);
+        } else {
+            setAttributes(linkItem, key, false);
+        }
+
+        listItem.appendChild(linkItem);
+        listContainer.appendChild(listItem);
+    }
+</script>
+</body>
+</html>

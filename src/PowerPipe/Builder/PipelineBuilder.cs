@@ -29,8 +29,8 @@ public sealed class PipelineBuilder<TContext, TResult>
     /// <param name="context">The pipeline context.</param>
     public PipelineBuilder(IPipelineStepFactory pipelineStepFactory, TContext context)
     {
-        ArgumentNullException.ThrowIfNull(pipelineStepFactory);
-        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(pipelineStepFactory, nameof(pipelineStepFactory));
+        ArgumentNullException.ThrowIfNull(context, nameof(context));
 
         _pipelineStepFactory = pipelineStepFactory;
         _context = context;

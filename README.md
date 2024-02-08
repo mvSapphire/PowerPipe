@@ -23,9 +23,14 @@ If you like this project give it a star 🌟
 
 - Lightweight
 - Fluent interface
+- Conditional steps
+- Parallel steps execution
+- Nested pipelines
+- Error handling
+- Steps compensation
 - Ease & Structured Workflow construction
 - Dependency Injection support
-- Developed using .NET 6
+- Developed using latest .NET
 
 ## 🧐 Sample use case
 
@@ -61,6 +66,50 @@ public  class  ECommercePipelineService : IECommercePipelineService
     }
 }
 ```
+
+## 🤩 Workflow visualization
+
+Sometimes workflows could be too big to track what is happening.
+
+That's why we created a workflow visualization tool. This tool was designed with simplicity in mind.
+You have to add just **few lines of code** to make this work!
+
+### Install required packages
+
+- Package Manager Console
+```
+Install-Package PowerPipe.Visualization
+Install-Package PowerPipe.Visualization.Extensions.MicrosoftDependencyInjection
+```
+
+- .NET CLI
+```
+dotnet add package PowerPipe.Visualization
+dotnet add package PowerPipe.Visualization.Extensions.MicrosoftDependencyInjection
+```
+
+### Usage
+
+In your Startup/Program file add required services and register middleware:
+
+``` csharp
+builder.Services.AddPowerPipeVisualization(o => o.ScanFromType(typeof(ECommercePipelineService)));
+
+// ...
+
+app.UsePowerPipeVisualization();
+```
+
+Then start you application and navigate to `/powerpipe` endpoint.
+
+And workflow from the sample above parsed to this beautiful diagram. 🌟
+
+<img src="https://github.com/mvSapphire/PowerPipe/blob/master/assets/readme-diagram-sample.png?raw=true" alt="drawing" width="800"/>
+
+> Note! This is the very first version of workflow visualization! Looking forward to your feedback 🤗
+
+> Known issues: 
+> - OnError parsing could lead to missing steps on the diagram
 
 ## 🛠️ Getting started
 
