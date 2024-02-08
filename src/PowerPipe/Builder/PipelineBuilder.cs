@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using PowerPipe.Builder.Steps;
 using PowerPipe.Interfaces;
 
@@ -15,6 +16,7 @@ public sealed class PipelineBuilder<TContext, TResult>
     where TResult : class
 {
     private readonly IPipelineStepFactory _pipelineStepFactory;
+    private readonly ILoggerFactory _loggerFactory;
     private volatile TContext _context;
 
     internal List<InternalStep<TContext>> Steps { get; } = new();
@@ -32,6 +34,7 @@ public sealed class PipelineBuilder<TContext, TResult>
 
         _pipelineStepFactory = pipelineStepFactory;
         _context = context;
+        _loggerFactory = pipelineStepFactory.ServiceProvider.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
     }
 
     /// <summary>
@@ -42,7 +45,7 @@ public sealed class PipelineBuilder<TContext, TResult>
     public PipelineBuilder<TContext, TResult> Add<T>()
         where T : IStepBase<TContext>
     {
-        Steps.Add(new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>));
+        Steps.Add(new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>, _loggerFactory));
 
         return this;
     }
@@ -56,7 +59,9 @@ public sealed class PipelineBuilder<TContext, TResult>
     public PipelineBuilder<TContext, TResult> AddIf<T>(Predicate<TContext> predicate)
         where T : IStepBase<TContext>
     {
-        Steps.Add(new AddIfStep<TContext>(predicate, new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>)));
+        Steps.Add(new AddIfStep<TContext>(
+            predicate,
+            new LazyStep<TContext>(_pipelineStepFactory.Create<T, TContext>, _loggerFactory)));
 
         return this;
     }
@@ -74,8 +79,8 @@ public sealed class PipelineBuilder<TContext, TResult>
     {
         Steps.Add(new AddIfElseStep<TContext>(
             predicate,
-            new LazyStep<TContext>(_pipelineStepFactory.Create<TIf, TContext>),
-            new LazyStep<TContext>(_pipelineStepFactory.Create<TElse, TContext>)));
+            new LazyStep<TContext>(_pipelineStepFactory.Create<TIf, TContext>, _loggerFactory),
+            new LazyStep<TContext>(_pipelineStepFactory.Create<TElse, TContext>, _loggerFactory)));
 
         return this;
     }
