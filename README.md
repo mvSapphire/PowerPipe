@@ -102,11 +102,9 @@ app.UsePowerPipeVisualization();
 
 Then start you application and navigate to `/powerpipe` endpoint.
 
-🤩And workflow from sample above parsed to this beautiful diagram. 🤩
+And workflow from the sample above parsed to this beautiful diagram. 🤩
 
-<p align="center">
-  <img src="https://github.com/mvSapphire/PowerPipe/blob/master/assets/readme-diagram-sample.png?raw=true" alt="drawing" width="500"/>
-</p>
+<img src="https://github.com/mvSapphire/PowerPipe/blob/master/assets/readme-diagram-sample.png?raw=true" alt="drawing" width="800"/>
 
 ## 🛠️ Getting started
 
