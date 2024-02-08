@@ -9,8 +9,6 @@ public class SampleParallelStep4 : IPipelineParallelStep<SamplePipelineContext>
 {
     public ValueTask ExecuteAsync(SamplePipelineContext context, CancellationToken cancellationToken)
     {
-        Console.WriteLine($"{nameof(SampleParallelStep4)} Executed");
-
         throw new InvalidOperationException();
 
         // return ValueTask.CompletedTask;
