@@ -67,7 +67,7 @@ public  class  ECommercePipelineService : IECommercePipelineService
 }
 ```
 
-## 🧩 Workflow visualization
+## 🤩 Workflow visualization
 
 Sometimes workflows could be too big to track what is happening.
 
@@ -102,9 +102,14 @@ app.UsePowerPipeVisualization();
 
 Then start you application and navigate to `/powerpipe` endpoint.
 
-And workflow from the sample above parsed to this beautiful diagram. 🤩
+And workflow from the sample above parsed to this beautiful diagram. 🌟
 
 <img src="https://github.com/mvSapphire/PowerPipe/blob/master/assets/readme-diagram-sample.png?raw=true" alt="drawing" width="800"/>
+
+> Note! This is the very first version of workflow visualization! Looking forward to your feedback 🤗
+
+> Known issues: 
+> - OnError parsing could lead to missing steps on the diagram
 
 ## 🛠️ Getting started
 
