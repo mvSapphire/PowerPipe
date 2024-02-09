@@ -110,6 +110,7 @@ And workflow from the sample above parsed to this beautiful diagram. 🌟
 
 > Known issues: 
 > - OnError parsing could lead to missing steps on the diagram
+> - Double links between entities
 
 ## 🛠️ Getting started
 
