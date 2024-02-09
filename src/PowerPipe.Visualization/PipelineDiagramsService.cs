@@ -17,8 +17,8 @@ namespace PowerPipe.Visualization;
 /// <inheritdoc />
 public class PipelineDiagramsService : IPipelineDiagramService
 {
-    private readonly Regex _pipelineBuilderRegex = new(@"(new PipelineBuilder)[\s\S]*(;)", RegexOptions.Compiled);
-    private readonly Dictionary<string, string> _diagrams;
+    private readonly Regex _pipelineBuilderRegex = new("(new PipelineBuilder)[^;]*", RegexOptions.Compiled);
+    private readonly IDictionary<string, string> _diagrams;
 
     private readonly PowerPipeVisualizationConfiguration _configuration;
     private readonly ILogger<PipelineDiagramsService> _logger;
@@ -50,9 +50,26 @@ public class PipelineDiagramsService : IPipelineDiagramService
         {
             foreach (var type in GetTypesToDecompile())
             {
-                var decompiler = new CSharpDecompiler(type.Assembly.Location, new DecompilerSettings());
+                var index = 1;
 
-                _diagrams.Add(type.Name, ProcessDecompiledType(decompiler.DecompileTypeAsString(new FullTypeName(type.FullName))));
+                var decompiler = new CSharpDecompiler(type.Assembly.Location, new DecompilerSettings());
+                var decompiledTypes = decompiler.DecompileTypeAsString(new FullTypeName(type.FullName));
+
+                foreach (var diagram in ProcessDecompiledType(decompiledTypes))
+                {
+                    if (diagram is null)
+                        continue;
+
+                    if (_diagrams.TryAdd(type.Name, diagram))
+                    {
+                        index = 1;
+                    }
+                    else
+                    {
+                        index++;
+                        _diagrams.TryAdd($"{type.Name} | {index}", diagram);
+                    }
+                }
             }
         }
         catch (Exception e)
@@ -73,25 +90,35 @@ public class PipelineDiagramsService : IPipelineDiagramService
         return types;
     }
 
-    private string ProcessDecompiledType(string decompiledType)
+    private IEnumerable<string> ProcessDecompiledType(string decompiledType)
     {
-        var input = _pipelineBuilderRegex.Match(decompiledType).ToString();
+        var matches = _pipelineBuilderRegex.Matches(decompiledType);
 
-        if (string.IsNullOrEmpty(input))
+        if (matches.Count <= 0)
         {
-            return null;
+            yield return null;
         }
 
-        var inputStream = new AntlrInputStream(input);
-        var pipelineLexer = new PipelineLexer(inputStream);
-        var commonTokenStream = new CommonTokenStream(pipelineLexer);
-        var pipelineParser = new PipelineParser(commonTokenStream);
+        foreach (Match match in _pipelineBuilderRegex.Matches(decompiledType))
+        {
+            var input = match.ToString();
+            
+            if (string.IsNullOrEmpty(input))
+            {
+                yield return null;
+            }
 
-        var startContext = pipelineParser.start();
+            var inputStream = new AntlrInputStream(input);
+            var pipelineLexer = new PipelineLexer(inputStream);
+            var commonTokenStream = new CommonTokenStream(pipelineLexer);
+            var pipelineParser = new PipelineParser(commonTokenStream);
 
-        var visitor = new PipelineParserVisitor();
-        var graph = (IGraph)visitor.Visit(startContext);
+            var startContext = pipelineParser.start();
 
-        return graph.Render();
+            var visitor = new PipelineParserVisitor();
+            var graph = (IGraph)visitor.Visit(startContext);
+
+            yield return graph.Render();
+        }
     }
 }
