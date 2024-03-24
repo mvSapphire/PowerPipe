@@ -13,7 +13,8 @@ namespace PowerPipe.UnitTests;
 
 public class PipelineDependencyInjectionTests : IClassFixture<AutoDIFixture>
 {
-    private readonly ServiceProvider _serviceProvider;
+    private readonly IServiceProvider _serviceProvider;
+
     public PipelineDependencyInjectionTests(AutoDIFixture diFixture)
     {
         _serviceProvider = diFixture.ServiceCollection.BuildServiceProvider();

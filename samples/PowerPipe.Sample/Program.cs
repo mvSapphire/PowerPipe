@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PowerPipe.Sample.Steps;
 
@@ -20,7 +20,7 @@ internal static class Program
     private static IServiceProvider ConfigureServices()
     {
         //setup dependency injection
-        IServiceCollection services = new ServiceCollection();
+        var services = new ServiceCollection();
         
         services.AddPowerPipe(config =>
         {
