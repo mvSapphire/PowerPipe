@@ -99,8 +99,15 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
 
             ErrorHandledSucceed = await HandleExceptionAsync(context, cancellationToken);
 
-            if (!ErrorHandledSucceed.Value)
+            if (ErrorHandledSucceed.Value)
+            {
+                if (NextStep is not null)
+                    await NextStep.ExecuteAsync(context, cancellationToken);
+            }
+            else
+            {
                 throw new PipelineExecutionException(e);
+            }
         }
         finally
         {

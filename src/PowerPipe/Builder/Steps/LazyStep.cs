@@ -28,7 +28,11 @@ internal class LazyStep<TContext> : InternalStep<TContext>
             if (instance is IPipelineStep<TContext> step)
                 step.NextStep = NextStep;
 
-            Logger = loggerFactory?.CreateLogger(instance.GetType());
+            var instanceType = instance.GetType();
+
+            Logger = loggerFactory?.CreateLogger(instanceType);
+
+            Logger?.LogDebug("{Step} executing", instanceType.FullName);
 
             return instance;
         });
@@ -45,7 +49,5 @@ internal class LazyStep<TContext> : InternalStep<TContext>
         StepExecuted = true;
 
         await _step.Value.ExecuteAsync(context, cancellationToken);
-
-        Logger?.LogDebug("{Step} executed", _step.Value.GetType().FullName);
     }
 }
