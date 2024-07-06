@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace PowerPipe.Builder.Steps;
 
@@ -21,10 +22,14 @@ internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
     /// </summary>
     /// <param name="predicate">The predicate to determine whether to execute the sub-pipeline.</param>
     /// <param name="pipelineBuilder">The builder for the sub-pipeline to execute.</param>
-    public IfPipelineStep(Predicate<TContext> predicate, PipelineBuilder<TContext, TResult> pipelineBuilder)
+    /// <param name="loggerFactory">A logger factory</param>
+    public IfPipelineStep(
+        Predicate<TContext> predicate, PipelineBuilder<TContext, TResult> pipelineBuilder, ILoggerFactory loggerFactory)
     {
         _predicate = predicate;
         _pipelineBuilder = pipelineBuilder;
+
+        Logger = loggerFactory?.CreateLogger<IfPipelineStep<TContext, TResult>>();
     }
 
     /// <summary>
@@ -37,6 +42,8 @@ internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
     {
         if (_predicate(context))
         {
+            Logger?.LogDebug("Executing internal pipeline.");
+
             StepExecuted = true;
 
             await _pipelineBuilder.Build().RunAsync(cancellationToken, returnResult: false);

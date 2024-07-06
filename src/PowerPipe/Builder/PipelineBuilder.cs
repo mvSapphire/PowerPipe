@@ -96,7 +96,9 @@ public sealed class PipelineBuilder<TContext, TResult>
     {
         var internalBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
 
-        Steps.Add(new IfPipelineStep<TContext, TResult>(predicate, internalBuilder));
+        internalBuilder.MarkStepsAsNestedPipeline();
+
+        Steps.Add(new IfPipelineStep<TContext, TResult>(predicate, internalBuilder, _loggerFactory));
 
         return this;
     }
@@ -112,7 +114,9 @@ public sealed class PipelineBuilder<TContext, TResult>
     {
         var internalBuilder = action(new PipelineBuilder<TContext, TResult>(_pipelineStepFactory, _context));
 
-        Steps.Add(new ParallelStep<TContext, TResult>(maxDegreeOfParallelism, internalBuilder));
+        internalBuilder.MarkStepsAsNestedPipeline();
+
+        Steps.Add(new ParallelStep<TContext, TResult>(maxDegreeOfParallelism, internalBuilder, _loggerFactory));
 
         return this;
     }
@@ -156,4 +160,7 @@ public sealed class PipelineBuilder<TContext, TResult>
 
         return new Pipeline<TContext, TResult>(_context, Steps);
     }
+
+    private void MarkStepsAsNestedPipeline() =>
+        Steps.ForEach(step => step.MarkStepAsNested());
 }
