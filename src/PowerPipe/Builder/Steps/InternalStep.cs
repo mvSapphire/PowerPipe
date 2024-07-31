@@ -32,6 +32,11 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     protected virtual bool StepExecuted { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indication where this step is in a nested pipeline.
+    /// </summary>
+    protected virtual bool IsNested { get; private set; }
+
+    /// <summary>
     /// Gets or sets the error handling behavior for this step.
     /// </summary>
     protected virtual PipelineStepErrorHandling? ErrorHandlingBehaviour { get; private set; }
@@ -56,6 +61,14 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
     private bool? ErrorHandledSucceed { get; set; }
 
     private bool AllowedToCompensate => StepExecuted && ErrorHandledSucceed == false && CompensationStep?.IsCompensated == false;
+
+    /// <summary>
+    /// Marks step as nested.
+    /// </summary>
+    public void MarkStepAsNested()
+    {
+        IsNested = true;
+    }
 
     /// <summary>
     /// Configures error handling behavior for this step.
@@ -87,20 +100,30 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
 
             await ExecuteInternalAsync(context, cancellationToken);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            if (e is PipelineExecutionException or OperationCanceledException)
+            if (!HandleException(exception))
             {
                 ErrorHandledSucceed = false;
                 throw;
             }
 
-            Logger?.LogDebug("Exception thrown during execution. {exception}", e);
+            Logger?.LogError("Exception thrown during execution. {exception}", exception);
 
             ErrorHandledSucceed = await HandleExceptionAsync(context, cancellationToken);
 
-            if (!ErrorHandledSucceed.Value)
-                throw new PipelineExecutionException(e);
+            if (ErrorHandledSucceed.Value)
+            {
+                if (NextStep is not null)
+                    await NextStep.ExecuteAsync(context, cancellationToken);
+            }
+            else
+            {
+                if (IsNested)
+                    throw new NestedPipelineExecutionException(exception);
+                else
+                    throw new PipelineExecutionException(exception);
+            }
         }
         finally
         {
@@ -110,6 +133,12 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
                 await CompensationStep.CompensateAsync(context, cancellationToken);
             }
         }
+
+        return;
+
+        bool HandleException(Exception exception) =>
+            (!IsNested || exception is not NestedPipelineExecutionException) &&
+            exception is not (PipelineExecutionException or OperationCanceledException);
     }
 
     /// <summary>

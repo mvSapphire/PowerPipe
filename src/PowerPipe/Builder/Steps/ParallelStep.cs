@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace PowerPipe.Builder.Steps;
 
@@ -20,10 +21,14 @@ internal class ParallelStep<TContext, TResult> : InternalStep<TContext>
     /// </summary>
     /// <param name="maxDegreeOfParallelism">The maximum degree of parallelism for the parallel execution.</param>
     /// <param name="pipelineBuilder">The builder for the sub-pipeline to execute in parallel.</param>
-    public ParallelStep(int maxDegreeOfParallelism, PipelineBuilder<TContext, TResult> pipelineBuilder)
+    /// <param name="loggerFactory">A logger factory</param>
+    public ParallelStep(
+        int maxDegreeOfParallelism, PipelineBuilder<TContext, TResult> pipelineBuilder, ILoggerFactory loggerFactory)
     {
         _maxDegreeOfParallelism = maxDegreeOfParallelism;
         _pipelineBuilder = pipelineBuilder;
+
+        Logger = loggerFactory?.CreateLogger<ParallelStep<TContext, TResult>>();
     }
 
     /// <summary>
@@ -34,6 +39,8 @@ internal class ParallelStep<TContext, TResult> : InternalStep<TContext>
     /// <returns>A task representing the asynchronous operation.</returns>
     protected override async ValueTask ExecuteInternalAsync(TContext context, CancellationToken cancellationToken)
     {
+        Logger?.LogDebug("Executing parallel steps.");
+
         StepExecuted = true;
 
         var parallelOptions = new ParallelOptions
