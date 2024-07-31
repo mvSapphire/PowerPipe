@@ -133,9 +133,12 @@ public class PipelineTests
     public async Task OnError_Succeed(PipelineStepErrorHandling errorHandlingBehaviour, bool applyErrorHandling)
     {
         var step = Substitute.For<TestStep1>();
+        var step2 = Substitute.For<TestStep2>();
 
         step.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
             .Returns(_ => throw new InvalidOperationException("Test message"));
+        step2.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
+            .Returns(ValueTask.CompletedTask);
 
         var context = new TestPipelineContext();
         var cts = new CancellationTokenSource();
@@ -143,6 +146,7 @@ public class PipelineTests
         var stepFactory =
             new PipelineStepFactory(new ServiceCollection()
                 .AddTransient(_ => step)
+                .AddTransient(_ => step2)
                 .BuildServiceProvider());
 
         var retryCount = 3;
@@ -153,6 +157,7 @@ public class PipelineTests
         var pipeline = new PipelineBuilder<TestPipelineContext, TestPipelineResult>(stepFactory, context)
             .Add<TestStep1>()
                 .OnError(errorHandlingBehaviour, maxRetryCount: isRetryBehaviour ? retryCount : default, predicate: ShouldApplyErrorHandling)
+            .Add<TestStep2>()
             .Build();
 
         var action = async () => await pipeline.RunAsync(cts.Token);
@@ -170,11 +175,62 @@ public class PipelineTests
                 await action.Should().NotThrowAsync<PipelineExecutionException>();
 
                 await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+                await step2.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
             }
         }
         else
         {
             await action.Should().ThrowAsync<PipelineExecutionException>();
+        }
+    }
+
+    [Theory]
+    [InlineData(PipelineStepErrorHandling.Suppress)]
+    [InlineData(PipelineStepErrorHandling.Retry)]
+    public async Task OnError_NestedPipeline_Succeed(PipelineStepErrorHandling errorHandlingBehaviour)
+    {
+        var step = Substitute.For<TestStep1>();
+        var step2 = Substitute.For<TestStep2>();
+
+        step.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
+            .Returns(_ => throw new InvalidOperationException("Test message"));
+        step2.ExecuteAsync(Arg.Any<TestPipelineContext>(), Arg.Any<CancellationToken>())
+            .Returns(ValueTask.CompletedTask);
+
+        var context = new TestPipelineContext();
+        var cts = new CancellationTokenSource();
+
+        var stepFactory =
+            new PipelineStepFactory(new ServiceCollection()
+                .AddTransient(_ => step)
+                .AddTransient(_ => step2)
+                .BuildServiceProvider());
+
+        var isRetryBehaviour = errorHandlingBehaviour is PipelineStepErrorHandling.Retry;
+        var maxRetryCount = isRetryBehaviour ? 3 : default;
+
+        var pipeline = new PipelineBuilder<TestPipelineContext, TestPipelineResult>(stepFactory, context)
+            .If(_ => true, b => b
+                .Add<TestStep1>())
+            .OnError(errorHandlingBehaviour, maxRetryCount: maxRetryCount)
+            .Add<TestStep2>()
+            .Build();
+
+        var action = async () => await pipeline.RunAsync(cts.Token);
+
+        if (isRetryBehaviour)
+        {
+            await action.Should().ThrowAsync<PipelineExecutionException>();
+
+            await step.Received(1 + maxRetryCount).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+            await step2.Received(0).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+        }
+        else
+        {
+            await action.Should().NotThrowAsync<PipelineExecutionException>();
+
+            await step.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
+            await step2.Received(1).ExecuteAsync(Arg.Is(context), Arg.Is(cts.Token));
         }
     }
 
