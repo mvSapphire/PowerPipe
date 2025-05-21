@@ -3,6 +3,12 @@
 </p>
 
 <span align="center">
+  
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mvSapphire/PowerPipe)
+
+</span>
+
+<span align="center">
 
 [![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/mvSapphire/PowerPipe/build.yml)](https://github.com/mvSapphire/PowerPipe/actions)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/mvSapphire/87b833b49852f7f088e1d4d913600a91/raw/code-coverage.json)
