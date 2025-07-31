@@ -108,7 +108,7 @@ internal abstract class InternalStep<TContext> : IPipelineStep<TContext>, IPipel
                 throw;
             }
 
-            Logger?.LogError("Exception thrown during execution. {exception}", exception);
+            Logger?.LogDebug(exception, "Exception thrown during execution");
 
             ErrorHandledSucceed = await HandleExceptionAsync(context, cancellationToken);
 
