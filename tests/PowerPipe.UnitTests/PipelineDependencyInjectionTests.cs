@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using PowerPipe.Builder;
 using PowerPipe.Exceptions;
