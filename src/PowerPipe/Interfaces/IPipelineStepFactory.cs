@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
 
 namespace PowerPipe.Interfaces;
 
@@ -7,11 +7,6 @@ namespace PowerPipe.Interfaces;
 /// </summary>
 public interface IPipelineStepFactory
 {
-    /// <summary>
-    /// Instance of the service provider
-    /// </summary>
-    IServiceProvider ServiceProvider { get; }
-
     /// <summary>
     /// Creates an instance of a pipeline step.
     /// </summary>
@@ -29,4 +24,10 @@ public interface IPipelineStepFactory
     /// <returns>An instance of the specified pipeline compensation step.</returns>
     IPipelineCompensationStep<TContext> CreateCompensation<TStep, TContext>()
         where TStep : IPipelineCompensationStep<TContext>;
+
+    /// <summary>
+    /// Gets the logger factory for creating loggers within the pipeline.
+    /// </summary>
+    /// <returns>The logger factory, or null if logging is not configured.</returns>
+    ILoggerFactory GetLoggerFactory();
 }

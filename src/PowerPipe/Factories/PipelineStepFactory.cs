@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using PowerPipe.Interfaces;
 
 namespace PowerPipe.Factories;
@@ -6,8 +8,7 @@ namespace PowerPipe.Factories;
 /// <inheritdoc/>
 public class PipelineStepFactory : IPipelineStepFactory
 {
-    /// <inheritdoc/>
-    public IServiceProvider ServiceProvider { get; }
+    private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PipelineStepFactory"/> class.
@@ -15,20 +16,28 @@ public class PipelineStepFactory : IPipelineStepFactory
     /// <param name="serviceProvider">The service provider to resolve step instances.</param>
     public PipelineStepFactory(IServiceProvider serviceProvider)
     {
-        ServiceProvider = serviceProvider;
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+
+        _serviceProvider = serviceProvider;
     }
 
     /// <inheritdoc/>
     public IStepBase<TContext> Create<TStep, TContext>()
         where TStep : IStepBase<TContext>
     {
-        return ServiceProvider.GetService(typeof(TStep)) as IStepBase<TContext>;
+        return _serviceProvider.GetRequiredService(typeof(TStep)) as IStepBase<TContext>;
     }
 
     /// <inheritdoc/>
     public IPipelineCompensationStep<TContext> CreateCompensation<TStep, TContext>()
         where TStep : IPipelineCompensationStep<TContext>
     {
-        return ServiceProvider.GetService(typeof(TStep)) as IPipelineCompensationStep<TContext>;
+        return _serviceProvider.GetRequiredService(typeof(TStep)) as IPipelineCompensationStep<TContext>;
+    }
+
+    /// <inheritdoc/>
+    public ILoggerFactory GetLoggerFactory()
+    {
+        return _serviceProvider.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
     }
 }

@@ -6,12 +6,18 @@ namespace PowerPipe.Builder.Steps;
 
 /// <summary>
 /// Represents a parallel execution pipeline step.
+/// <para>
+/// Thread safety: all steps within a parallel branch share the same <typeparamref name="TContext"/> instance.
+/// Step implementations added via <c>Parallel()</c> must not mutate shared context state without
+/// proper synchronization (e.g., <c>Interlocked</c>, <c>lock</c>, or concurrent collections).
+/// Read-only access to context is safe. If steps need to write results, use thread-safe data structures
+/// or collect results independently and merge after parallel execution completes.
+/// </para>
 /// </summary>
 /// <typeparam name="TContext">The type of context used in the pipeline.</typeparam>
 /// <typeparam name="TResult">The type of result returned by the pipeline.</typeparam>
 internal class ParallelStep<TContext, TResult> : InternalStep<TContext>
     where TContext : PipelineContext<TResult>
-    where TResult : class
 {
     private readonly int _maxDegreeOfParallelism;
     private readonly PipelineBuilder<TContext, TResult> _pipelineBuilder;
