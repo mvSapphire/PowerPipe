@@ -4,123 +4,240 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PowerPipe visualization</title>
-    <link href="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.esm.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <style>
-        @media (max-width: 767.98px) { .sidebar { top: 5rem; } }
-        .sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 48px 0 0; box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1); }
-        .sidebar .nav-link { font-weight: 500; color: #333; }
-        .sidebar .nav-link.active { color: #2470dc; }
-        .navbar-brand { padding-top: .75rem; padding-bottom: .75rem; font-size: 1rem; background-color: rgba(0, 0, 0, .25); box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25); }
-        .navbar { right: 1rem; padding: .75rem 1rem; border-width: 0; border-radius: 0; }
-        #diagram { text-align: center; }
-    </style>
-</head>
-<body>
-<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">PowerPipe</a>
-    <div class="navbar-nav">
-        <div class="text-end col-md-3 col-lg-2 me-0 px-3">
-            <a href="https://github.com/mvSapphire/PowerPipe" target="_blank" class="text-light text-decoration-none">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16" data-darkreader-inline-fill="" style="&#45;&#45;darkreader-inline-fill: currentColor;">
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8"></path>
-                </svg>
-            </a>
-        </div>
-    </div>
-</header>
-<div class="container-fluid">
-    <div class="row">
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-            <div class="position-sticky pt-3">
-                <p class="d-flex align-items-center mb-3 mb-md-0 me-md-auto px-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="22" fill="currentColor" class="bi bi-diagram-3-fill" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5zm-6 8A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5zm6 0A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5zm6 0a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5z" />
-                    </svg>
-                    <span class="fs-4">Workflows</span>
-                </p>
-                <hr>
-                <ul id="list" class="nav flex-column">
-                </ul>
-            </div>
-        </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Workflow visualization</h1>
-            </div>
-            <div id="diagram" class="mermaid">
-            </div>
-        </main>
-    </div>
-</div>
-<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-        startOnLoad: true
-    });
-
-    const diagrams = %DIAGRAMS%;
-
-    const diagramKeys = Object.keys(diagrams);
-
-    const listContainer = document.getElementById('list');
-    const diagramContainer = document.getElementById('diagram');
-
-    listContainer.innerHTML = '';
-    diagramContainer.innerHTML = '';
-
-    const setAttributes = (element, key, isActive) => {
-        element.textContent = key;
-        element.setAttribute('aria-current', 'page');
-        element.setAttribute('href', '#');
-        element.addEventListener('click', clickEvent);
-
-        if (isActive) {
-            element.classList.add('nav-link', 'active');
-            diagramContainer.innerHTML = diagrams[key];
-        } else {
-            element.classList.add('nav-link');
-        }
-    };
-
-    let clickEvent = function( e ) {
-        const lis = listContainer.getElementsByTagName('li');
-
-        for (let i = 0; i < lis.length; i++) {
-            const element = lis[i].getElementsByTagName('a')[0];
-            element.classList.remove('active');
-
-            if (element.innerHTML === e.target.innerHTML) {
-                element.classList.add('active');
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eef4ff', 100: '#d9e5ff', 200: '#bcd2ff', 400: '#6fa1ff', 500: '#2470dc', 600: '#1a5bbf', 800: '#0f2f5e', 900: '#0c1f3d' }
+                    }
+                }
             }
         }
-
-        diagramContainer.removeAttribute('data-processed');
-        diagramContainer.innerHTML = diagrams[e.target.innerText];
-        mermaid.run({
-            nodes: [diagramContainer],
-        });
-    }
-
-    for(let i = 0; i < diagramKeys.length; i++) {
-        const key = diagramKeys[i];
-
-        const listItem = document.createElement('li');
-        listItem.classList.add('nav-item');
-
-        const linkItem = document.createElement('a');
-
-        if (i === 0) {
-            setAttributes(linkItem, key, true);
-        } else {
-            setAttributes(linkItem, key, false);
+    </script>
+    <!-- Prevent flash: apply dark class before paint -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
         }
+    </script>
+    <style>
+        #sidebar-list::-webkit-scrollbar { width: 4px; }
+        #sidebar-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-200 antialiased transition-colors duration-200">
 
-        listItem.appendChild(linkItem);
-        listContainer.appendChild(listItem);
+<!-- Navbar -->
+<header class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-14 bg-gray-900 px-4 shadow-lg">
+    <a href="#" class="text-white font-semibold text-lg tracking-tight select-none">PowerPipe</a>
+    <div class="flex items-center gap-3">
+        <!-- Dark mode toggle -->
+        <button id="theme-toggle" type="button"
+                class="relative w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                aria-label="Toggle dark mode">
+            <svg class="w-5 h-5 hidden dark:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>
+            </svg>
+            <svg class="w-5 h-5 block dark:hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/>
+            </svg>
+        </button>
+        <a href="https://github.com/mvSapphire/PowerPipe" target="_blank" rel="noopener noreferrer"
+           class="text-gray-400 hover:text-white transition-colors" aria-label="GitHub repository">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+            </svg>
+        </a>
+    </div>
+</header>
+
+<!-- Layout -->
+<div class="flex pt-14 min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="fixed top-14 bottom-0 left-0 w-56 bg-gray-900 border-r border-gray-800 flex flex-col z-20">
+        <div class="px-4 pt-5 pb-3 flex items-center gap-2 text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 text-brand-400" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5zm-6 8A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5zm6 0A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5zm6 0a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5z"/>
+            </svg>
+            <span class="text-sm font-semibold uppercase tracking-wider">Workflows</span>
+        </div>
+        <div class="border-t border-gray-800 mx-3"></div>
+        <nav id="sidebar-list" class="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
+        </nav>
+    </aside>
+
+    <!-- Main content: pannable / zoomable canvas -->
+    <main class="ml-56 flex-1 relative overflow-hidden bg-gray-100 dark:bg-gray-950 transition-colors duration-200">
+        <div id="viewport" class="absolute inset-0 cursor-grab active:cursor-grabbing select-none"
+             style="touch-action: none;">
+            <div id="diagram" class="mermaid absolute origin-top-left">
+            </div>
+        </div>
+
+        <!-- Zoom controls -->
+        <div class="absolute bottom-4 right-4 z-10 flex flex-col gap-1.5">
+            <button id="zoom-in" type="button" aria-label="Zoom in"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-colors text-lg font-bold">
+                +
+            </button>
+            <button id="zoom-reset" type="button" aria-label="Reset zoom"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-colors text-xs font-semibold">
+                Fit
+            </button>
+            <button id="zoom-out" type="button" aria-label="Zoom out"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-colors text-lg font-bold">
+                &minus;
+            </button>
+        </div>
+
+        <!-- Zoom level indicator -->
+        <div id="zoom-level" class="absolute bottom-4 left-4 z-10 px-2 py-1 rounded-md bg-white/80 dark:bg-gray-800/80 text-xs text-gray-500 dark:text-gray-400 font-mono backdrop-blur-sm">
+            100%
+        </div>
+    </main>
+</div>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+    const isDark = () => document.documentElement.classList.contains('dark');
+    const getMermaidTheme = () => isDark() ? 'dark' : 'default';
+
+    mermaid.initialize({ startOnLoad: true, theme: getMermaidTheme() });
+
+    // --- Elements ---
+    const toggleBtn = document.getElementById('theme-toggle');
+    const viewport = document.getElementById('viewport');
+    const diagramEl = document.getElementById('diagram');
+    const sidebar = document.getElementById('sidebar-list');
+    const zoomLevelEl = document.getElementById('zoom-level');
+    let activeKey = null;
+
+    // --- Pan & Zoom state ---
+    const MIN_ZOOM = 0.1;
+    const MAX_ZOOM = 4;
+    const ZOOM_STEP = 0.15;
+    let scale = 1, panX = 0, panY = 0;
+    let dragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+
+    const applyTransform = () => {
+        diagramEl.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+        zoomLevelEl.textContent = `${Math.round(scale * 100)}%`;
+    };
+
+    const zoomTo = (newScale, cx, cy) => {
+        const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newScale));
+        panX = cx - (cx - panX) * (clamped / scale);
+        panY = cy - (cy - panY) * (clamped / scale);
+        scale = clamped;
+        applyTransform();
+    };
+
+    const fitToView = () => {
+        const svg = diagramEl.querySelector('svg');
+        if (!svg) return;
+        const vw = viewport.clientWidth;
+        const vh = viewport.clientHeight;
+        const sw = svg.getBoundingClientRect().width / scale;
+        const sh = svg.getBoundingClientRect().height / scale;
+        scale = Math.min(vw / sw, vh / sh, 1.5) * 0.9;
+        panX = (vw - sw * scale) / 2;
+        panY = (vh - sh * scale) / 2;
+        applyTransform();
+    };
+
+    // Mouse drag
+    viewport.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        dragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        panStartX = panX;
+        panStartY = panY;
+        viewport.setPointerCapture(e.pointerId);
+    });
+    viewport.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        panX = panStartX + (e.clientX - dragStartX);
+        panY = panStartY + (e.clientY - dragStartY);
+        applyTransform();
+    });
+    viewport.addEventListener('pointerup', () => { dragging = false; });
+    viewport.addEventListener('pointercancel', () => { dragging = false; });
+
+    // Wheel zoom
+    viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = viewport.getBoundingClientRect();
+        const cx = e.clientX - rect.left;
+        const cy = e.clientY - rect.top;
+        const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+        zoomTo(scale * (1 + delta), cx, cy);
+    }, { passive: false });
+
+    // Zoom buttons
+    document.getElementById('zoom-in').addEventListener('click', () => {
+        const rect = viewport.getBoundingClientRect();
+        zoomTo(scale * (1 + ZOOM_STEP), rect.width / 2, rect.height / 2);
+    });
+    document.getElementById('zoom-out').addEventListener('click', () => {
+        const rect = viewport.getBoundingClientRect();
+        zoomTo(scale * (1 - ZOOM_STEP), rect.width / 2, rect.height / 2);
+    });
+    document.getElementById('zoom-reset').addEventListener('click', fitToView);
+
+    // --- Theme toggle ---
+    toggleBtn.addEventListener('click', () => {
+        const dark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+        mermaid.initialize({ startOnLoad: false, theme: getMermaidTheme() });
+        if (activeKey) renderDiagram(activeKey);
+    });
+
+    // --- Diagrams ---
+    const diagrams = %DIAGRAMS%;
+    const keys = Object.keys(diagrams);
+
+    const renderDiagram = async (key) => {
+        activeKey = key;
+        diagramEl.removeAttribute('data-processed');
+        diagramEl.innerHTML = diagrams[key];
+        await mermaid.run({ nodes: [diagramEl] });
+        requestAnimationFrame(fitToView);
+    };
+
+    const selectDiagram = (key) => {
+        sidebar.querySelectorAll('a').forEach(link => {
+            const isActive = link.dataset.key === key;
+            link.classList.toggle('bg-brand-500/10', isActive);
+            link.classList.toggle('text-brand-400', isActive);
+            link.classList.toggle('font-medium', isActive);
+            link.classList.toggle('text-gray-400', !isActive);
+        });
+        renderDiagram(key);
+    };
+
+    sidebar.addEventListener('click', (e) => {
+        const link = e.target.closest('a[data-key]');
+        if (!link) return;
+        e.preventDefault();
+        selectDiagram(link.dataset.key);
+    });
+
+    sidebar.innerHTML = keys.map(key =>
+        `<a href="#" data-key="${key}"
+            class="block px-3 py-2 rounded-lg text-sm transition-colors duration-150 hover:bg-gray-800 hover:text-gray-200 text-gray-400">
+            ${key}
+        </a>`
+    ).join('');
+
+    if (keys.length > 0) {
+        selectDiagram(keys[0]);
     }
 </script>
 </body>
