@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Options;
 using PowerPipe.Visualization;
 using PowerPipe.Visualization.Configurations;
 

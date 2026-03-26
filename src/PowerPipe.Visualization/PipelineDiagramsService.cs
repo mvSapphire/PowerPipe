@@ -30,8 +30,8 @@ public class PipelineDiagramsService : IPipelineDiagramService
     /// <param name="loggerFactory">Logger factory</param>
     public PipelineDiagramsService(IOptions<PowerPipeVisualizationConfiguration> configuration, ILoggerFactory loggerFactory)
     {
-        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
-        ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(loggerFactory);
         
         _configuration = configuration.Value;
 
@@ -41,6 +41,11 @@ public class PipelineDiagramsService : IPipelineDiagramService
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    /// Diagrams are cached after the first call. Subsequent calls return the cached result
+    /// without re-scanning assemblies or re-decompiling types. There is no cache invalidation;
+    /// if pipeline definitions change at runtime, restart the application to refresh diagrams.
+    /// </remarks>
     public IDictionary<string, string> GetDiagrams()
     {
         if (_diagrams.Count > 0)
@@ -74,7 +79,7 @@ public class PipelineDiagramsService : IPipelineDiagramService
         }
         catch (Exception e)
         {
-            _logger.LogDebug("Exception occured during retrieving of diagrams. {Exception}", e);
+            _logger.LogError(e, "Exception occured during retrieving of diagrams.");
         }
 
         return _diagrams;

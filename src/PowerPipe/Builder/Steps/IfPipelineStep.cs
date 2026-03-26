@@ -12,7 +12,6 @@ namespace PowerPipe.Builder.Steps;
 /// <typeparam name="TResult">The type of result returned by the sub-pipeline.</typeparam>
 internal class IfPipelineStep<TContext, TResult> : InternalStep<TContext>
     where TContext : PipelineContext<TResult>
-    where TResult : class
 {
     private readonly Predicate<TContext> _predicate;
     private readonly PipelineBuilder<TContext, TResult> _pipelineBuilder;

@@ -3,23 +3,50 @@ name: Build & Test
 on:
   push:
     branches: [ "master" ]
-  pull_request: 
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [net8.0, net9.0, net10.0]
+
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           8.0.x
           9.0.x
+          10.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build&Test
+    - name: Build
+      run: dotnet build --no-restore --verbosity normal
+    - name: Test
+      run: dotnet test -f ${{ matrix.framework }} -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-build --verbosity normal
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          8.0.x
+          9.0.x
+          10.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Test with coverage
       run: dotnet test -f net8.0 -p:CollectCoverage=true -p:CoverletOutput=TestResults/ -p:CoverletOutputFormat=opencover --no-restore --verbosity normal
     - name: Create Test Coverage Badge
       uses: simon-k/dotnet-code-coverage-badge@v1.0.0

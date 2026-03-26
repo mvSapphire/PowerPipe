@@ -8,7 +8,6 @@ namespace PowerPipe;
 /// <inheritdoc/>
 public class Pipeline<TContext, TResult> : IPipeline<TResult>
     where TContext : PipelineContext<TResult>
-    where TResult : class
 {
     private readonly TContext _context;
     private readonly IPipelineStep<TContext> _initStep;
@@ -33,7 +32,7 @@ public class Pipeline<TContext, TResult> : IPipeline<TResult>
         await _initStep.ExecuteAsync(_context, cancellationToken);
 
         // to avoid multiple result calls in nested pipelines
-        return returnResult ? _context.GetPipelineResult() : null;
+        return returnResult ? _context.GetPipelineResult() : default;
     }
 
     private static void SetupSteps(IReadOnlyList<IPipelineStep<TContext>> steps)

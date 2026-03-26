@@ -13,11 +13,10 @@ namespace PowerPipe.Builder;
 /// <typeparam name="TResult">The type of result returned by the pipeline.</typeparam>
 public sealed class PipelineBuilder<TContext, TResult>
     where TContext : PipelineContext<TResult>
-    where TResult : class
 {
     private readonly IPipelineStepFactory _pipelineStepFactory;
     private readonly ILoggerFactory _loggerFactory;
-    private volatile TContext _context;
+    private readonly TContext _context;
 
     internal List<InternalStep<TContext>> Steps { get; } = new();
     private InternalStep<TContext> LastStep => Steps[^1];
@@ -29,12 +28,12 @@ public sealed class PipelineBuilder<TContext, TResult>
     /// <param name="context">The pipeline context.</param>
     public PipelineBuilder(IPipelineStepFactory pipelineStepFactory, TContext context)
     {
-        ArgumentNullException.ThrowIfNull(pipelineStepFactory, nameof(pipelineStepFactory));
-        ArgumentNullException.ThrowIfNull(context, nameof(context));
+        ArgumentNullException.ThrowIfNull(pipelineStepFactory);
+        ArgumentNullException.ThrowIfNull(context);
 
         _pipelineStepFactory = pipelineStepFactory;
         _context = context;
-        _loggerFactory = pipelineStepFactory.ServiceProvider.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
+        _loggerFactory = pipelineStepFactory.GetLoggerFactory();
     }
 
     /// <summary>
@@ -105,6 +104,11 @@ public sealed class PipelineBuilder<TContext, TResult>
 
     /// <summary>
     /// Adds a parallel execution branch to the pipeline.
+    /// <para>
+    /// All steps within the parallel branch share the same <typeparamref name="TContext"/> instance.
+    /// Step implementations must not mutate shared context state without proper synchronization
+    /// (e.g., <c>Interlocked</c>, <c>lock</c>, or concurrent collections).
+    /// </para>
     /// </summary>
     /// <param name="action">An action to configure the parallel execution branch.</param>
     /// <param name="maxDegreeOfParallelism">The maximum degree of parallelism for the branch.</param>
@@ -156,6 +160,9 @@ public sealed class PipelineBuilder<TContext, TResult>
     /// <returns>The constructed pipeline.</returns>
     public IPipeline<TResult> Build()
     {
+        if (Steps.Count > 0 && Steps[^1] is FinishStep<TContext>)
+            return new Pipeline<TContext, TResult>(_context, Steps);
+
         Steps.Add(new FinishStep<TContext>());
 
         return new Pipeline<TContext, TResult>(_context, Steps);

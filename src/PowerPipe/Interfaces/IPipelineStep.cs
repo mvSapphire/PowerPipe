@@ -8,6 +8,7 @@ public interface IPipelineStep<TContext> : IStepBase<TContext>
 {
     /// <summary>
     /// Gets or sets the next step in the pipeline.
+    /// This property is managed by the pipeline infrastructure and should not be set by consumer code.
     /// </summary>
     public IPipelineStep<TContext> NextStep { get; set; }
 }
